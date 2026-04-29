@@ -1,0 +1,4044 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeoPulse · 意脉科技 BP Deck</title>
+<style>
+  html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#050508; font-family:'Inter',sans-serif; }
+  /* Fixed logical canvas 1920x1080 — matches design reference (1440x810 slide + breathing room). JS scales via transform to fit any window. */
+  #stage { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+  #frame { width:1920px; height:1080px; border:0; background:#050508; transition:opacity .35s ease; transform-origin:center center; flex-shrink:0; }
+  #frame.fading { opacity:0; }
+  .nav-dots { position:fixed; right:30px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:12px; z-index:1000; }
+  .dot { width:10px; height:10px; border-radius:50%; background:rgba(255,255,255,.22); cursor:pointer; transition:all .3s ease; }
+  .dot.active { background:#00E5FF; transform:scale(1.4); box-shadow:0 0 10px rgba(0,229,255,.8); }
+  .page-indicator { position:fixed; left:24px; bottom:20px; color:rgba(255,255,255,.35); font:12px/1 Inter,sans-serif; letter-spacing:1px; z-index:1000; user-select:none; }
+  /* Tap zones: left 22% → prev, right 22% → next. z-index 500 sits above iframe (default 0) but below nav-dots (1000). */
+  .tap-zone { position:fixed; top:0; bottom:0; width:22%; z-index:500; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  .tap-left  { left:0; }
+  .tap-right { right:0; }
+</style>
+</head>
+<body>
+  <div id="stage"><iframe id="frame" title="NeoPulse Slide"></iframe></div>
+  <div class="tap-zone tap-left"  id="tapLeft"  aria-label="上一页"></div>
+  <div class="tap-zone tap-right" id="tapRight" aria-label="下一页"></div>
+  <div class="nav-dots" id="dots"></div>
+  <div class="page-indicator" id="pageInd">01 / 12</div>
+
+<template id="slide-0" data-label="P1 Cover"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <base href="./">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPulse Animated Logo Perfect Sync</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+        
+        :root {
+            --bg-dark: #050508;
+            --ring-color: rgba(255, 255, 255, 0.3);
+            --track-color: rgba(255, 255, 255, 0.15);
+            --signal-color: #00E5FF;
+            --text-color: #FFFFFF;
+        }
+
+        body {
+            height: 100vh;
+            margin: 0;
+            background: radial-gradient(circle at center, #101520 0%, var(--bg-dark) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            overflow: hidden;
+        }
+
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: translateY(-5%);
+            position: relative;
+        }
+
+        /* SVG Sizing */
+        .logo-svg {
+            width: 280px;
+            height: 280px;
+            margin-bottom: 40px;
+            filter: drop-shadow(0 0 30px rgba(0, 229, 255, 0.05));
+        }
+
+        /* Outer Circle */
+        .outer-ring {
+            fill: none;
+            stroke: var(--ring-color);
+            stroke-width: 1.5;
+        }
+
+        /* Base Line (Darker) */
+        .base-track {
+            fill: none;
+            stroke: var(--track-color);
+            stroke-width: 2.5;
+            stroke-linejoin: round;
+            stroke-linecap: round;
+        }
+
+        /* The Animated Action Potential Line (Traces the path) */
+        .signal-trace {
+            fill: none;
+            stroke: var(--signal-color);
+            stroke-width: 3;
+            stroke-linejoin: round;
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 8px var(--signal-color));
+            
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            
+            /* Takes exactly 2 seconds to trace, then 1s pause (Total 3s) */
+            animation: trace-line 3s linear infinite;
+        }
+
+        /* Nodes (Dots) Base */
+        .node {
+            fill: var(--bg-dark);
+            stroke: var(--ring-color);
+            stroke-width: 2;
+            transition: all 0.1s;
+        }
+
+        /* Perfectly calculated timing delays based on physical path distance!
+           Total Path = 242 units. Travel time = 2.0s 
+           P1: 0s
+           P2(30/242): 0.25s
+           P3(93/242): 0.77s
+           P4(180/242): 1.49s
+           P5(212/242): 1.75s
+           P6(242/242): 2.00s
+        */
+        .node-1 { animation: pulse-node 3s 0.00s infinite; }
+        .node-2 { animation: pulse-node 3s 0.25s infinite; }
+        .node-3 { animation: pulse-node 3s 0.77s infinite; }
+        .node-4 { animation: pulse-node 3s 1.49s infinite; }
+        .node-5 { animation: pulse-node 3s 1.75s infinite; }
+        .node-6 { animation: pulse-node 3s 2.00s infinite; }
+
+        /* Typography */
+        .brand-name {
+            font-size: 42px;
+            font-weight: 500;
+            color: var(--text-color);
+            letter-spacing: 16px; 
+            margin-right: -16px; 
+            margin-bottom: 12px;
+        }
+
+        .brand-sub {
+            font-size: 24px;
+            font-weight: 400;
+            color: rgba(255, 255, 255, 0.85);
+            letter-spacing: 14px;
+            margin-right: -14px;
+        }
+
+        /* Keyframes */
+        @keyframes trace-line {
+            0% {
+                stroke-dashoffset: 100;
+                opacity: 1;
+            }
+            66.66% { /* At 2.0s (out of 3s) */
+                stroke-dashoffset: 0;
+                opacity: 1;
+            }
+            80% {
+                stroke-dashoffset: 0;
+                opacity: 0;
+            }
+            100% {
+                stroke-dashoffset: 100;
+                opacity: 0;
+            }
+        }
+
+        @keyframes pulse-node {
+            0%, 50%, 100% {
+                fill: var(--bg-dark);
+                stroke: var(--ring-color);
+                stroke-width: 2;
+                transform: scale(1);
+                filter: none;
+            }
+            5%, 15% { /* Instantly pulses when signal hits it */
+                fill: #FFF;
+                stroke: var(--signal-color);
+                stroke-width: 3;
+                transform: scale(1.4);
+                filter: drop-shadow(0 0 12px var(--signal-color));
+            }
+        }
+        
+        .bg-grid {
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+            mask-image: radial-gradient(circle at center, black 20%, transparent 80%);
+            -webkit-mask-image: radial-gradient(circle at center, black 20%, transparent 80%);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-grid"></div>
+
+    <div class="logo-container">
+        <!-- SVG Graphic -->
+        <svg viewBox="0 0 200 200" class="logo-svg">
+            <!-- 1. Outer Circle -->
+            <circle cx="100" cy="100" r="85" class="outer-ring" />
+            
+            <!-- 2. Base Action Potential Track -->
+            <polyline class="base-track" points="40,110 70,110 90,50 110,135 130,110 160,110" />
+            
+            <!-- 3. Animated Signal Line (drawing forward) -->
+            <polyline class="signal-trace" points="40,110 70,110 90,50 110,135 130,110 160,110" pathLength="100" />
+            
+            <!-- 4. Nodes (Dots) - Perfectly Synced -->
+            <circle cx="40" cy="110" r="4" class="node node-1" style="transform-origin: 40px 110px;" />
+            <circle cx="70" cy="110" r="4" class="node node-2" style="transform-origin: 70px 110px;" />
+            <circle cx="90" cy="50"  r="4" class="node node-3" style="transform-origin: 90px 50px;" />
+            <circle cx="110" cy="135" r="4" class="node node-4" style="transform-origin: 110px 135px;" />
+            <circle cx="130" cy="110" r="4" class="node node-5" style="transform-origin: 130px 110px;" />
+            <circle cx="160" cy="110" r="4" class="node node-6" style="transform-origin: 160px 110px;" />
+        </svg>
+
+        <div class="brand-name">NEOPULSE</div>
+        <div class="brand-sub">意脉科技</div>
+    </div>
+
+    
+</body>
+</html>
+</template>
+<template id="slide-1" data-label="P2 Iceberg"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <base href="./">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPulse - P2 Data Grid Iceberg</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+        
+        :root {
+            --bg-base: #050508;
+            --ocean-dark: #0A1118;
+            --ice-cyan: #4EA8DB;
+            --ice-bright: #00E5FF;
+            --text-main: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .slide-canvas {
+            position: relative;
+            width: 90vw;
+            max-width: 1440px;
+            aspect-ratio: 16 / 9;
+            background: var(--bg-base);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 40px;
+        }
+
+        /* 1. Header Area */
+        .header-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 20px;
+        }
+        .title-block { display: flex; align-items: baseline; gap: 20px; }
+        .title-block h1 { font-size: 38px; font-weight: 800; color: #FFF; }
+        .title-block p  { font-size: 18px; color: var(--ice-cyan); font-weight: 500; }
+        .top-logo { width: 240px; position: absolute; top: 8px; right: 8px; z-index: 50; }
+
+        /* 2. Pipeline Area */
+        .pipeline-area {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            margin-bottom: 20px;
+            padding: 0 20px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.02) 0%, rgba(78, 168, 219, 0.05) 100%);
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .pipe-wrap {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .connecting-arrow-h {
+            flex: 1;
+            margin: 0 30px;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(0, 229, 255, 0.6) 100%);
+            position: relative;
+        }
+        .connecting-arrow-h::after {
+            content: ''; position: absolute; right: -2px; top: -3px; 
+            border-top: 4px solid transparent; border-bottom: 4px solid transparent; border-left: 6px solid rgba(0, 229, 255, 0.8);
+        }
+
+        .pipeline-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255,255,255,0.8);
+            font-weight: 600;
+            font-size: 16px;
+        }
+        .pipeline-box.active {
+            color: var(--ice-bright);
+            text-shadow: 0 0 10px rgba(0,229,255,0.5);
+            position: relative;
+        }
+        .icon-wrap {
+            width: 28px; height: 28px;
+            border-radius: 6px; background: rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .pipeline-box.active .icon-wrap { background: rgba(0, 229, 255, 0.2); }
+        .icon-wrap svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+
+        /* Waterfall trace explicit arrow */
+        .waterfall-flow {
+            position: absolute; top: 100%; left: 50%; width: 2px; height: 30px;
+            background: var(--ice-bright); z-index: 50;
+        }
+        .waterfall-flow::after {
+            content: ''; position: absolute; bottom: -4px; left: -4px;
+            border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 6px solid var(--ice-bright);
+        }
+
+        /* 3. Main Split View */
+        .main-content {
+            flex: 1; display: flex; gap: 30px; position: relative;
+            min-height: 0; /* Ensures content doesn't break out of flex container */
+        }
+
+        /* Left side: Photo Iceberg Pillar (WIDER NOW) */
+        .iceberg-pillar {
+            width: 32%; /* Increased from 22% */
+            border-radius: 12px; overflow: hidden; position: relative;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+        .iceberg-pillar img {
+            width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%;
+        }
+
+        /* Right side: Matrix Grid */
+        .matrix-side {
+            width: 68%;
+            display: flex; flex-direction: column;
+            justify-content: flex-start;
+            position: relative;
+            min-height: 0;
+            overflow: visible;
+            gap: 5px; /* Extermely tight gap to hoist everything up */
+        }
+
+        /* Bottom Macro Data Bar on the Right */
+        .macro-bottom-bar {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px 16px;
+            background: linear-gradient(90deg, rgba(78, 168, 219, 0.08) 0%, transparent 100%);
+            border-left: 4px solid var(--ice-bright);
+            border-radius: 4px;
+            transform: translateY(12px);
+        }
+
+        .macro-bottom-bar ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            column-gap: 16px;
+            row-gap: 8px;
+            width: 100%;
+        }
+
+        .macro-bottom-bar li {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.95);
+            position: relative;
+            padding-left: 16px;
+            line-height: 1.4;
+            white-space: nowrap;
+        }
+        
+        .macro-bottom-bar li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 6px;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--ice-bright);
+            box-shadow: 0 0 5px var(--ice-bright);
+        }
+
+        .macro-bottom-bar .hl {
+            font-weight: 800;
+            color: var(--ice-bright);
+            letter-spacing: 0.5px;
+        }
+
+        .macro-bottom-bar .citations-row {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 400;
+            border-top: 1px dashed rgba(255, 255, 255, 0.15);
+            padding-top: 8px;
+            white-space: nowrap;
+        }
+
+        /* The 1x4 and 2x4 Matrix Grids */
+        .grid-row-1x4 {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; /* Reduced gap */
+        }
+        
+        .grid-row-2x4 {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; grid-template-rows: repeat(2, 1fr);
+        }
+
+        /* The Data Cards - Image Only Overlay format */
+        .data-card {
+            background: #111;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px; overflow: hidden;
+            position: relative;
+            display: flex;
+            aspect-ratio: 16 / 9; /* Reverted to 16/9 as requested */
+            width: 100%;
+        }
+        .data-card img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+        
+        .card-body {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
+            padding: 15px 10px 8px; /* Padding pushes text to bottom */
+            display: flex; align-items: flex-end; justify-content: center;
+        }
+        .card-body h3 {
+            font-size: 13px; font-weight: 600; text-align: center; letter-spacing: 0.5px;
+        }
+
+        /* Red Ocean Styling */
+        .tag-row {
+            display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;
+        }
+        .zone-title { font-size: 16px; font-weight: 600; color: #FFF; letter-spacing: 1px;}
+        .zone-title.dim { color: #A0A0B0; }
+        .zone-title.bright { color: var(--ice-bright); text-shadow: 0 0 10px rgba(0, 229, 255, 0.3); }
+
+        .data-card.dim { border-color: rgba(100,100,110,0.3); }
+        .data-card.dim h3 { color: #D0D0E0; }
+        .data-card.dim img { filter: grayscale(50%) brightness(0.6); }
+
+        /* Blue Ocean Styling */
+        .data-card.bright { border-color: rgba(78, 168, 219, 0.3); }
+        .data-card.bright h3 { color: #FFF; }
+        .data-card.bright img { filter: contrast(1.1) brightness(0.8); }
+        
+        /* Clean Gap Divider line */
+        .water-divider {
+            flex-shrink: 0;
+            height: 1px; width: 100%; background: linear-gradient(90deg, rgba(78, 168, 219, 0.8) 0%, transparent 100%);
+            position: relative;
+            margin-top: 15px; /* Pushed specifically downwards to align with the visual iceberg horizon */
+            margin-bottom: 2px; /* The passive zone is now sucked tightly upwards to the line */
+            z-index: 5;
+        }
+        .water-divider span {
+            position: absolute; right: 0; top: -10px; background: var(--bg-base); padding: 0 15px;
+            color: var(--ice-cyan); font-size: 12px; letter-spacing: 2px; border: 1px solid rgba(78, 168, 219, 0.3); border-radius: 20px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="slide-canvas">
+        
+        <!-- 1. Header Area -->
+        <div class="header-area">
+            <div class="title-block">
+                <h1>冰山之下</h1>
+                <p>尚未被系统性布局的千亿级市场</p>
+            </div>
+        </div>
+        <img src="slide_assets/lockup_white.svg" class="top-logo" alt="NeoPulse Logo">
+
+        <!-- 2. Fully Stretched Pipeline -->
+        <div class="pipeline-area">
+            <!-- Node 1 -->
+            <div class="pipe-wrap">
+                <div class="pipeline-box">
+                    <div class="icon-wrap"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/></svg></div>
+                    信号采集层
+                </div>
+                <div class="connecting-arrow-h"></div>
+            </div>
+            <!-- Node 2 -->
+            <div class="pipe-wrap">
+                <div class="pipeline-box">
+                    <div class="icon-wrap"><svg viewBox="0 0 24 24"><path d="M21 7.5L12 2.5L3 7.5V16.5L12 21.5L21 16.5V7.5Z"/></svg></div>
+                    特征解码层
+                </div>
+                <div class="connecting-arrow-h"></div>
+            </div>
+            <!-- Node 3 (Terminal) -->
+            <div class="pipeline-box active" style="min-width: 140px; justify-content: flex-end;">
+                <div class="icon-wrap"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21H16M12 17V21M4 7H20"/></svg></div>
+                终端应用层
+                <div class="waterfall-flow" style="left: 80%;"></div>
+            </div>
+        </div>
+
+        <!-- 3. Real photo layout -->
+        <div class="main-content">
+            
+            <!-- Left Iceberg Photography -->
+            <div class="iceberg-pillar">
+                <img src="slide_assets/iceberg_bg.png" alt="Deep Ocean Iceberg">
+            </div>
+
+            <!-- Right Dense Matrix Data -->
+            <div class="matrix-side">
+                
+                <!-- TOP 4 (Active Intent) -->
+                <div class="active-zone">
+                    <div class="tag-row">
+                        <div class="zone-title dim">主动意图输出</div>
+                    </div>
+                    
+                    <div class="grid-row-1x4">
+                        <div class="data-card dim">
+                            <img src="slide_assets/card_01_bionic_arm.png">
+                            <div class="card-body"><h3>脑控假肢/机械臂</h3></div>
+                        </div>
+                        <div class="data-card dim">
+                            <img src="slide_assets/card_02_exoskeleton.png">
+                            <div class="card-body"><h3>脑控外骨骼辅助</h3></div>
+                        </div>
+                        <div class="data-card dim">
+                            <img src="slide_assets/card_03_vr_gaming.png">
+                            <div class="card-body"><h3>脑控游戏/VR交互</h3></div>
+                        </div>
+                        <div class="data-card dim">
+                            <img src="slide_assets/card_04_brain_typing.png">
+                            <div class="card-body"><h3>意念打字/沟通</h3></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Separator strictly between the two grids -->
+                <div class="water-divider">
+                    <span>大众认知水平面</span>
+                </div>
+
+                <!-- BOTTOM 8 (Passive Monitoring) -->
+                <div class="passive-zone">
+                    <div class="tag-row">
+                        <div class="zone-title bright">被动状态监测</div>
+                    </div>
+
+                    <div class="grid-row-2x4">
+                        <!-- Row 1 -->
+                        <div class="data-card bright">
+                            <img src="slide_assets/card_05_sleep.png">
+                            <div class="card-body"><h3>睡眠分期与诊断</h3></div>
+                        </div>
+                        <div class="data-card bright">
+                            <img src="slide_assets/card_06_fatigue.png">
+                            <div class="card-body"><h3>工业疲劳预警</h3></div>
+                        </div>
+                        <div class="data-card bright">
+                            <img src="slide_assets/card_07_anesthesia.png">
+                            <div class="card-body"><h3>麻醉深度监测</h3></div>
+                        </div>
+                        <div class="data-card bright">
+                            <img src="https://images.unsplash.com/photo-1559757175-5700dde675bc?q=80&w=300">
+                            <div class="card-body"><h3>癫痫发作预警</h3></div>
+                        </div>
+                        
+                        <!-- Row 2 (Unsplash Hybrids for ungenerated concepts) -->
+                        <div class="data-card bright">
+                            <img src="https://images.unsplash.com/photo-1511174511562-5f7f18b874f8?q=80&w=300">
+                            <div class="card-body"><h3>阿尔茨海默早筛</h3></div>
+                        </div>
+                        <div class="data-card bright">
+                            <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=300">
+                            <div class="card-body"><h3>情绪与心理状态监测</h3></div>
+                        </div>
+                        <div class="data-card bright">
+                            <img src="https://images.unsplash.com/photo-1456406644174-8ddd4cd52a06?q=80&w=300">
+                            <div class="card-body"><h3>ADHD 神经检测</h3></div>
+                        </div>
+                        <div class="data-card bright">
+                            <img src="https://images.unsplash.com/photo-1583324113626-70df0f4deaab?q=80&w=300">
+                            <div class="card-body"><h3>意识障碍评估</h3></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NEW Macro Bottom Bar -->
+                <div class="macro-bottom-bar">
+                    <ul>
+                        <li><span class="hl">国内市场：</span>2024 年 32 亿起步，2040 年直指 1200 亿规模</li>
+                        <li><span class="hl">国际市场：</span>麦肯锡测算 2040 年全球医疗脑机接口 1450 亿美元</li>
+                        <li><span class="hl">国策背书：</span>"十五五"规划将脑机接口列为新经济增长点</li>
+                        <li><span class="hl">医保破冰：</span>非侵入式脑机接口进国家医保立项，浙江落地乙类</li>
+                    </ul>
+                    <div class="citations-row">
+                        数据来源：清华五道口 / 国信证券 &nbsp;·&nbsp; McKinsey 2040 &nbsp;·&nbsp; 中国政府网 2025.10 &nbsp;·&nbsp; 国家医保局 2025.3
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    
+</body>
+</html>
+</template>
+<template id="slide-2" data-label="P3 Architecture"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <base href="./">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPulse - 意识连续谱平台架构 v2</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+
+        :root {
+            --bg-base: #050508;
+            --ocean-dark: #0A1118;
+            --ice-cyan: #4EA8DB;
+            --ice-bright: #00E5FF;
+            --text-main: #FFFFFF;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            /* Node Colors - 5 states from awake to coma */
+            --node-cognitive: #00E676;   /* 新增 清醒-认知 绿色 */
+            --node-fatigue: #00E5FF;
+            --node-sleep: #2979FF;
+            --node-anesthesia: #B388FF;
+            --node-coma: #3949AB;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            display: flex; align-items: center; justify-content: center;
+            height: 100vh; overflow: hidden;
+        }
+
+        .slide-canvas {
+            position: relative;
+            width: 90vw; max-width: 1440px; aspect-ratio: 16 / 9;
+            background: var(--bg-base);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+            display: flex; flex-direction: column; padding: 40px;
+        }
+
+        /* HEADER */
+        .header-area {
+            display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px;
+            z-index: 100; position: relative;
+        }
+        .title-block { display: flex; align-items: baseline; gap: 20px; }
+        .title-block h1 { font-size: 38px; font-weight: 800; color: #FFF; }
+        .title-block p  { font-size: 18px; color: var(--ice-cyan); font-weight: 500; }
+        .top-logo { width: 240px; position: absolute; top: 8px; right: 8px; z-index: 50; }
+
+        /* MAIN ARCHITECTURE SVG */
+        .flow-connections {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;
+        }
+
+        /* GRID ARCHITECTURE */
+        .arch-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            grid-template-rows: 1fr 2px 1fr 2px 1fr;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .layer-label {
+            font-size: 26px; font-weight: 700; color: #FFF;
+            display: flex; flex-direction: column; justify-content: center;
+            border-right: 4px solid var(--ice-bright);
+            padding-right: 30px; text-align: right;
+            height: 60%;
+        }
+
+        .divider {
+            grid-column: 1 / -1; height: 2px;
+            background: linear-gradient(90deg, transparent 0%, rgba(78, 168, 219, 0.3) 15%, rgba(78, 168, 219, 0.1) 90%, transparent 100%);
+            width: 100%;
+        }
+
+        /* TRACKS - 5 column equal distribution */
+        .track {
+            display: flex; align-items: center; width: 100%; height: 100%;
+            padding-left: 20px; padding-right: 20px;
+        }
+
+        .all-zone {
+            width: 100%; display: flex; justify-content: space-between; align-items: center;
+            position: relative;
+        }
+
+        /* LAYER 3: APPS */
+        .app-block {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid transparent;
+            border-radius: 12px;
+            padding: 18px 14px;
+            width: 18.5%;
+            height: 200px;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+            position: relative;
+            z-index: 5;
+        }
+        .app-block:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.3); }
+
+        .app-icon {
+            width: 32px; height: 32px; margin-bottom: 10px;
+            opacity: 0.8;
+            filter: drop-shadow(0 0 10px currentColor);
+        }
+        .app-icon svg { width: 100%; height: 100%; fill: currentColor; }
+
+        .app-block h4 { font-size: 17px; color: #FFF; font-weight: 600; margin-bottom: 12px; white-space: nowrap;}
+
+        .app-block ul { list-style: none; text-align: left; padding: 0; width: fit-content; margin: 0 auto; }
+        .app-block ul li {
+            font-size: 13px; color: var(--text-muted); line-height: 1.6;
+            position: relative; padding-left: 14px; margin-bottom: 4px;
+        }
+        .app-block ul li::before {
+            content: '·'; position: absolute; left: 0; font-weight: 900; color: inherit; font-size: 16px;
+            top: -2px;
+        }
+
+        /* LAYER 2: DECODE */
+        .decode-capsule {
+            width: 100%; height: 110px;
+            background: linear-gradient(90deg,
+                rgba(0, 230, 118, 0.05),
+                rgba(0, 229, 255, 0.08),
+                rgba(41, 121, 255, 0.10),
+                rgba(179, 136, 255, 0.08),
+                rgba(57, 73, 171, 0.05));
+            border: 1px solid rgba(0, 229, 255, 0.4);
+            border-radius: 60px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: inset 0 0 30px rgba(0, 229, 255, 0.1), 0 0 50px rgba(0, 229, 255, 0.1);
+            position: relative; overflow: hidden;
+            z-index: 5;
+        }
+        .decode-capsule::before {
+            content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--ice-bright), transparent);
+        }
+
+        .eeg-canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; opacity: 0.6; z-index: 1; mix-blend-mode: screen;
+        }
+        .wave-path {
+            fill: none; stroke-linecap: round; stroke-linejoin: round;
+            animation: drift var(--speed) linear infinite;
+        }
+        @keyframes drift {
+            from { stroke-dashoffset: var(--dash-len); }
+            to { stroke-dashoffset: 0; }
+        }
+
+        .decode-content {
+            z-index: 10; display: flex; flex-direction: column; align-items: center;
+            background: rgba(5,5,8,0.4); padding: 10px 40px; border-radius: 40px; backdrop-filter: blur(5px);
+        }
+        .decode-content h3 {
+            font-size: 24px; font-weight: 700; color: #FFF; letter-spacing: 4px;
+            text-shadow: 0 0 20px rgba(0, 229, 255, 0.8); margin-bottom: 6px;
+        }
+        .decode-content .subtitle {
+            font-size: 14px; color: var(--ice-bright); font-weight: 500; letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        /* LAYER 1: STATE SPECTRUM */
+        .spectrum-track .track-content {
+            width: 100%; display: flex; position: relative; height: 100%; align-items: center;
+            padding: 0 20px;
+        }
+
+        .spectrum-line {
+            position: absolute; left: 20px; right: 20px; top: 50%; height: 2px; transform: translateY(-50%);
+            background: linear-gradient(90deg,
+                var(--node-cognitive) 0%,
+                var(--node-fatigue) 25%,
+                var(--node-sleep) 50%,
+                var(--node-anesthesia) 75%,
+                var(--node-coma) 100%);
+            z-index: 1;
+            opacity: 0.55;
+        }
+
+        .s-node {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            position: relative; z-index: 5;
+        }
+
+        .dot {
+            width: 20px; height: 20px; border-radius: 50%;
+            border: 4px solid var(--bg-base); box-shadow: 0 0 15px currentColor;
+        }
+        .n-text { font-size: 16px; font-weight: 600; color: #FFF; margin-top: 18px; white-space: nowrap; }
+        .n-sub { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 4px; letter-spacing: 0.5px; white-space: nowrap;}
+
+        .s-node.cognitive { color: var(--node-cognitive); }
+        .s-node.fatigue { color: var(--node-fatigue); }
+        .s-node.sleep { color: var(--node-sleep); }
+        .s-node.anesthesia { color: var(--node-anesthesia); }
+        .s-node.coma { color: var(--node-coma); }
+
+        /* Spectrum axis caption */
+        .axis-caption {
+            position: absolute; bottom: -2px; right: 20px;
+            font-size: 10px; color: rgba(255,255,255,0.3);
+            letter-spacing: 2px; text-transform: uppercase;
+        }
+
+        /* Flow Path Animations */
+        .flow-path {
+            stroke-dasharray: 10 15;
+            animation: flowDash 3s linear infinite;
+        }
+        @keyframes flowDash {
+            to { stroke-dashoffset: -50; }
+        }
+    </style>
+</head>
+<body>
+    <div class="slide-canvas" id="slideCanvas">
+
+        <!-- Animated Flow SVG across entire canvas -->
+        <svg class="flow-connections" id="flowSVG"></svg>
+
+        <!-- Header -->
+        <div class="header-area">
+            <div class="title-block">
+                <h1>意脉路径</h1>
+                <p>检测-解码-干预 脑状态全谱脑机平台</p>
+            </div>
+        </div>
+        <img src="slide_assets/lockup_white.svg" class="top-logo" alt="NeoPulse Logo">
+
+        <!-- Horizontal Matrix Architecture -->
+        <div class="arch-grid">
+
+            <!-- LAYER 3: APPS -->
+            <div class="layer-label">应用层</div>
+            <div class="track">
+                <div class="all-zone">
+
+                    <!-- App 1: Cognitive (NEW) -->
+                    <div class="app-block" style="border-top-color: var(--node-cognitive);" id="app1">
+                        <div class="app-icon" style="color: var(--node-cognitive);">
+                            <svg viewBox="0 0 24 24"><path d="M21 8.5c0-1.93-1.57-3.5-3.5-3.5-.42 0-.83.08-1.21.22C15.61 3.85 14.16 3 12.5 3c-.83 0-1.62.21-2.31.59C9.49 2.65 8.39 2 7 2 4.79 2 3 3.79 3 6c0 .9.3 1.74.81 2.41C3.31 9.16 3 10.05 3 11c0 1.42.58 2.71 1.51 3.64C4.18 15.21 4 15.86 4 16.5 4 18.99 6.01 21 8.5 21c1.43 0 2.73-.66 3.5-1.78.77 1.12 2.07 1.78 3.5 1.78 2.49 0 4.5-2.01 4.5-4.5 0-.64-.18-1.29-.51-1.86C20.42 13.71 21 12.42 21 11c0-.95-.31-1.84-.81-2.59.51-.67.81-1.51.81-2.41z"/></svg>
+                        </div>
+                        <h4>脑认知评估</h4>
+                        <ul style="color: var(--node-cognitive);">
+                            <li>情绪状态评估</li>
+                            <li>注意力与认知功能</li>
+                            <li>神经反馈调节</li>
+                        </ul>
+                    </div>
+
+                    <!-- App 2: Fatigue -->
+                    <div class="app-block" style="border-top-color: var(--node-fatigue);" id="app2">
+                        <div class="app-icon" style="color: var(--node-fatigue);">
+                            <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                        </div>
+                        <h4>工业安全</h4>
+                        <ul style="color: var(--node-fatigue);">
+                            <li>秒级疲劳预警</li>
+                            <li>微睡眠检测</li>
+                            <li>经颅电刺激</li>
+                        </ul>
+                    </div>
+
+                    <!-- App 3: Sleep -->
+                    <div class="app-block" style="border-top-color: var(--node-sleep);" id="app3">
+                        <div class="app-icon" style="color: var(--node-sleep);">
+                            <svg viewBox="0 0 24 24"><path d="M11 2.05C16.89 2.55 21.46 7.23 21.95 13c.03.35.05.7.05 1.06 0 5.52-4.48 10-10 10S2 19.58 2 14.06c0-4.04 2.4-7.53 5.86-9.1.34-.15.72-.25 1.1-.31.05 0 .1-.01.14-.02-1.92 2.76-1.89 6.55.15 9.27 1.87 2.49 4.95 3.52 7.71 2.52-1.42 2.38-4.05 3.96-6.96 3.96-4.41 0-8-3.59-8-8 0-3.32 2.04-6.17 4.93-7.46.22-.1.44-.19.67-.27.14-.05.54-.15 1.4-.4z"/></svg>
+                        </div>
+                        <h4>睡眠健康</h4>
+                        <ul style="color: var(--node-sleep);">
+                            <li>居家整夜监测</li>
+                            <li>多维睡眠分期</li>
+                            <li>闭环声学刺激</li>
+                        </ul>
+                    </div>
+
+                    <!-- App 4: Anesthesia -->
+                    <div class="app-block" style="border-top-color: var(--node-anesthesia);" id="app4">
+                        <div class="app-icon" style="color: var(--node-anesthesia);">
+                            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-1.99.9-1.99 2L3 19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8 15l-5-5h3V9h4v4h3l-5 5z"/></svg>
+                        </div>
+                        <h4>麻醉监测</h4>
+                        <ul style="color: var(--node-anesthesia);">
+                            <li>麻醉深度监测</li>
+                            <li>术中知晓预警</li>
+                            <li>闭环靶控麻醉</li>
+                        </ul>
+                    </div>
+
+                    <!-- App 5: Coma -->
+                    <div class="app-block" style="border-top-color: var(--node-coma);" id="app5">
+                        <div class="app-icon" style="color: var(--node-coma);">
+                            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                        </div>
+                        <h4>意识评估</h4>
+                        <ul style="color: var(--node-coma);">
+                            <li>昏迷意识分级</li>
+                            <li>隐匿意识检测</li>
+                            <li>经颅电磁刺激</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Horizontal Divider -->
+            <div class="divider"></div>
+
+            <!-- LAYER 2: DECODE -->
+            <div class="layer-label">解码层</div>
+            <div class="track">
+                <div class="all-zone">
+                    <div class="decode-capsule" id="decodeNode">
+                        <svg class="eeg-canvas" preserveAspectRatio="none" id="eegCanvas"></svg>
+                        <div class="decode-content">
+                            <h3>全谱 EEG 基础模型</h3>
+                            <div class="subtitle">跨状态联合训练 · 底层共享 >80% 特征 · 场景扩展驱动精度飞轮</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Horizontal Divider -->
+            <div class="divider"></div>
+
+            <!-- LAYER 1: STATE SPECTRUM -->
+            <div class="layer-label">脑状态谱系</div>
+            <div class="track spectrum-track">
+                <div class="track-content">
+                    <div class="spectrum-line"></div>
+
+                    <div class="all-zone">
+                        <div class="s-node cognitive" id="node1">
+                            <div class="dot" style="background: var(--node-cognitive)"></div>
+                            <div class="n-text">清醒</div>
+                            <div class="n-sub">认知 · 情绪</div>
+                        </div>
+                        <div class="s-node fatigue" id="node2">
+                            <div class="dot" style="background: var(--node-fatigue)"></div>
+                            <div class="n-text">疲劳</div>
+                            <div class="n-sub">警觉性下降</div>
+                        </div>
+                        <div class="s-node sleep" id="node3">
+                            <div class="dot" style="background: var(--node-sleep)"></div>
+                            <div class="n-text">睡眠</div>
+                            <div class="n-sub">分期与诊断</div>
+                        </div>
+                        <div class="s-node anesthesia" id="node4">
+                            <div class="dot" style="background: var(--node-anesthesia)"></div>
+                            <div class="n-text">麻醉</div>
+                            <div class="n-sub">镇静深度</div>
+                        </div>
+                        <div class="s-node coma" id="node5">
+                            <div class="dot" style="background: var(--node-coma)"></div>
+                            <div class="n-text">昏迷</div>
+                            <div class="n-sub">意识障碍</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function drawFlowConnections() {
+            const svg = document.getElementById('flowSVG');
+            svg.innerHTML = '';
+
+            const decodeNode = document.getElementById('decodeNode');
+            const apps = [
+                document.getElementById('app1'),
+                document.getElementById('app2'),
+                document.getElementById('app3'),
+                document.getElementById('app4'),
+                document.getElementById('app5')
+            ];
+            const nodes = [
+                document.getElementById('node1'),
+                document.getElementById('node2'),
+                document.getElementById('node3'),
+                document.getElementById('node4'),
+                document.getElementById('node5')
+            ];
+            const colors = ['#00E676', '#00E5FF', '#2979FF', '#B388FF', '#3949AB'];
+
+            const canvasRect = document.getElementById('slideCanvas').getBoundingClientRect();
+
+            const getPos = (el, xPct, yPct) => {
+                const rect = el.getBoundingClientRect();
+                return {
+                    x: rect.left - canvasRect.left + (rect.width * xPct),
+                    y: rect.top - canvasRect.top + (rect.height * yPct)
+                };
+            };
+
+            const decodeBottomEdge = getPos(decodeNode, 0.5, 1);
+            const decodeTopEdge = getPos(decodeNode, 0.5, 0);
+
+            // Node -> Decode (Upwards)
+            nodes.forEach((node, i) => {
+                const dot = node.querySelector('.dot');
+                const start = getPos(dot, 0.5, 0.5);
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+
+                const d = `M ${start.x} ${start.y}
+                           C ${start.x} ${start.y - 40},
+                             ${decodeBottomEdge.x} ${decodeBottomEdge.y + 40},
+                             ${decodeBottomEdge.x} ${decodeBottomEdge.y}`;
+
+                path.setAttribute("d", d);
+                path.setAttribute("fill", "none");
+                path.setAttribute("stroke", colors[i]);
+                path.setAttribute("stroke-width", "2");
+                path.setAttribute("class", "flow-path");
+                path.style.opacity = 0.5;
+                svg.appendChild(path);
+            });
+
+            // Decode -> Apps (Upwards)
+            apps.forEach((app, i) => {
+                const end = getPos(app, 0.5, 1);
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+
+                const d = `M ${decodeTopEdge.x} ${decodeTopEdge.y}
+                           C ${decodeTopEdge.x} ${decodeTopEdge.y - 40},
+                             ${end.x} ${end.y + 20},
+                             ${end.x} ${end.y + 5}`;
+
+                path.setAttribute("d", d);
+                path.setAttribute("fill", "none");
+                path.setAttribute("stroke", colors[i]);
+                path.setAttribute("stroke-width", "3");
+                path.setAttribute("class", "flow-path");
+                path.style.opacity = 0.8;
+                svg.appendChild(path);
+            });
+        }
+
+        function createEEGWaves() {
+            const svg = document.getElementById('eegCanvas');
+            const colors = ['rgba(0, 230, 118, 0.4)', 'rgba(0, 229, 255, 0.5)', 'rgba(179, 136, 255, 0.3)'];
+            const speeds = ['15s', '20s', '12s'];
+
+            const width = svg.parentNode.getBoundingClientRect().width;
+            if(width === 0) { setTimeout(createEEGWaves, 100); return; }
+            const height = 110;
+            const segments = Math.floor(width / 40);
+
+            for(let i=0; i<3; i++) {
+                let pathString = `M 0 ${height/2} `;
+                let x = 0;
+                let totalLen = 0;
+
+                for(let j=0; j<segments+2; j++) {
+                    const nextX = x + 40 + Math.random()*20;
+                    const cX1 = x + 15;
+                    const cY1 = height/2 + (Math.random()-0.5)*90 * (i===1?1.5:1);
+                    const cX2 = nextX - 15;
+                    const cY2 = height/2 + (Math.random()-0.5)*90 * (i===1?1.5:1);
+                    const y = height/2 + (Math.random()-0.5)*20;
+
+                    pathString += `C ${cX1} ${cY1}, ${cX2} ${cY2}, ${nextX} ${y} `;
+                    x = nextX;
+                    totalLen += 60;
+                }
+
+                pathString += `L ${width} ${height/2} `;
+
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                path.setAttribute("d", pathString);
+                path.setAttribute("stroke", colors[i]);
+                path.setAttribute("stroke-width", i===1 ? "3" : "2");
+                path.setAttribute("class", "wave-path");
+                path.style.setProperty('--dash-len', totalLen * 2);
+                path.style.setProperty('--speed', speeds[i]);
+
+                path.style.strokeDasharray = (totalLen/8) + ' ' + (totalLen/10);
+
+                svg.appendChild(path);
+            }
+        }
+
+        window.addEventListener('resize', drawFlowConnections);
+
+        setTimeout(() => {
+            createEEGWaves();
+            drawFlowConnections();
+        }, 300);
+    </script>
+
+</body>
+</html>
+</template>
+<template id="slide-3" data-label="P4 Fatigue Tech"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <base href="./">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPulse - P4 工业预警系统方案验证</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+        
+        :root {
+            --bg-base: #050508;
+            --ice-cyan: #4EA8DB;
+            --ice-bright: #00E5FF;
+            --text-main: #FFFFFF;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --glass-bg: rgba(15, 20, 35, 0.5);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --neon-orange: #FF6D00;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            display: flex; align-items: center; justify-content: center;
+            height: 100vh; overflow: hidden;
+            background-image: 
+                radial-gradient(ellipse at top right, rgba(0, 229, 255, 0.05) 0%, transparent 60%),
+                radial-gradient(ellipse at bottom left, rgba(255, 109, 0, 0.03) 0%, transparent 60%);
+        }
+
+        .slide-canvas {
+            position: relative;
+            width: 90vw; max-width: 1440px; aspect-ratio: 16 / 9;
+            background: var(--bg-base);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+            display: flex; flex-direction: column; padding: 40px 50px;
+        }
+
+        /* ── HEADER ── */
+        .header-area {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            margin-bottom: 30px; position: relative; flex-shrink: 0;
+        }
+        .title-block { display: flex; align-items: baseline; gap: 20px; }
+        .title-block h1 { font-size: 38px; font-weight: 800; color: #FFF; }
+        .title-block p  { font-size: 18px; color: var(--ice-cyan); font-weight: 500; }
+        .top-logo { width: 240px; position: absolute; top: 8px; right: 8px; z-index: 50; }
+
+
+        /* ── MAIN CONTENT GRID ── */
+        .main-content {
+            flex: 1; display: flex; gap: 36px; min-height: 0;
+        }
+
+        /* LEFT: STRUCTURED ARGUMENTS */
+        .left-col-wrapper {
+            flex: 0 0 38%; display: flex; flex-direction: column; justify-content: space-between;
+        }
+
+        .argument-block {
+            background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(20,20,25,0.6) 100%);
+            border: 1px solid var(--glass-border); border-radius: 12px;
+            padding: 20px 24px 22px; position: relative; overflow: hidden;
+        }
+        .argument-block::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+        }
+        .arg-orange::before { background: var(--neon-orange); box-shadow: 0 0 10px var(--neon-orange); }
+        .arg-cyan::before { background: var(--ice-bright); box-shadow: 0 0 10px var(--ice-bright); }
+
+        .argument-block h3 {
+            font-size: 20px; font-weight: 700; color: #FFF; margin-bottom: 12px; letter-spacing: 1px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .argument-block h3 i {
+            display: inline-block; width: 26px; height: 26px; background: rgba(255,255,255,0.1);
+            border-radius: 6px; text-align: center; line-height: 26px; font-style: normal; font-size: 14px;
+        }
+
+        .bullet-list {
+            display: flex; flex-direction: column; gap: 14px; list-style: none;
+        }
+        .bullet-list li {
+            font-size: 15px; color: rgba(255,255,255,0.85); line-height: 1.65;
+            padding-left: 22px; position: relative;
+        }
+        .bullet-list li::before {
+            content: '■'; color: var(--ice-bright); position: absolute; left: 0; top: 2px; font-size: 13px;
+        }
+        .arg-orange .bullet-list li::before { color: var(--neon-orange); }
+
+        .highlight-quote {
+            background: rgba(255, 109, 0, 0.1); border: 1px dashed rgba(255, 109, 0, 0.3); border-radius: 8px;
+            padding: 10px 14px; margin-top: 12px; font-size: 13px; color: #FFCC80; line-height: 1.5;
+            font-weight: 500;
+        }
+
+        /* ── TIMELINE (FATIGUE · 金-红-红) ── */
+        .tl-wrap {
+            display: flex; flex-direction: column; gap: 8px;
+            padding: 2px 0 0;
+        }
+        .tl-zones {
+            display: grid; grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+        .tl-zone {
+            padding: 8px 10px 10px;
+            border-radius: 8px;
+            display: flex; flex-direction: column; gap: 3px;
+            position: relative;
+        }
+        .tl-zone.gold {
+            border: 1px solid rgba(255,179,0,0.28);
+            background: linear-gradient(180deg, rgba(255,179,0,0.1), rgba(255,179,0,0.02));
+        }
+        .tl-zone.red {
+            border: 1px solid rgba(255,23,68,0.25);
+            background: linear-gradient(180deg, rgba(255,23,68,0.08), rgba(255,23,68,0.02));
+        }
+        .tl-tag {
+            display: inline-block; align-self: flex-start;
+            padding: 2px 6px; border-radius: 3px;
+            font-size: 9px; font-weight: 700; letter-spacing: 0.8px;
+        }
+        .tl-zone.gold .tl-tag { background: rgba(255,179,0,0.2); color: #FFB300; }
+        .tl-zone.red .tl-tag { background: rgba(255,23,68,0.2); color: #FF5252; }
+
+        .tl-num {
+            font-size: 26px; font-weight: 800;
+            letter-spacing: -0.5px; line-height: 1;
+            margin-top: 2px;
+        }
+        .tl-zone.gold .tl-num {
+            background: linear-gradient(135deg, #FFB300, #FFD54F);
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 12px rgba(255, 179, 0, 0.3));
+        }
+        .tl-zone.red .tl-num {
+            background: linear-gradient(135deg, #FF1744, #FF5252);
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 12px rgba(255, 23, 68, 0.3));
+        }
+        .tl-desc {
+            font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.88);
+            line-height: 1.35; letter-spacing: 0.2px;
+        }
+        .tl-sub {
+            font-size: 10px; color: rgba(255,255,255,0.45);
+            line-height: 1.3;
+        }
+        .tl-src {
+            font-size: 9px; color: rgba(255,255,255,0.3);
+            font-style: italic; margin-top: 2px;
+        }
+        .tl-track {
+            position: relative; height: 2px;
+            margin: 4px 10px 0;
+            background: linear-gradient(to right,
+                rgba(255,179,0,0.95) 0%,
+                rgba(255,109,0,0.85) 30%,
+                rgba(255,23,68,0.85) 60%,
+                rgba(255,23,68,0.95) 100%);
+        }
+        .tl-dot {
+            position: absolute; top: -4px;
+            width: 10px; height: 10px; border-radius: 50%;
+            background: #050508;
+        }
+        .tl-dot.left  { left: calc(16.66% - 5px); border: 2px solid #FFB300; box-shadow: 0 0 8px #FFB300; }
+        .tl-dot.mid   { left: calc(50% - 5px); border: 2px solid #FF6D00; box-shadow: 0 0 8px #FF6D00; }
+        .tl-dot.right { left: calc(83.33% - 5px); border: 2px solid #FF1744; box-shadow: 0 0 8px #FF1744; }
+        .tl-labels {
+            display: grid; grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px; margin-top: 4px;
+            font-size: 10px; color: rgba(255,255,255,0.5); font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        .tl-labels span { text-align: center; }
+        .tl-tam {
+            margin-top: 2px; padding: 8px 12px;
+            border-radius: 8px;
+            background: linear-gradient(90deg, rgba(255,179,0,0.12), rgba(255,179,0,0.04));
+            border: 1px solid rgba(255,179,0,0.25);
+            display: flex; flex-direction: column; gap: 4px;
+        }
+        .tl-tam-head { display: flex; align-items: baseline; gap: 10px; }
+        .tl-tam-label {
+            font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.8);
+            letter-spacing: 0.3px; white-space: nowrap;
+        }
+        .tl-tam-num {
+            font-size: 22px; font-weight: 800;
+            background: linear-gradient(135deg, #FFB300, #FFD54F);
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.3px; line-height: 1;
+        }
+        .tl-tam-win { font-size: 10px; color: rgba(255,255,255,0.55); font-weight: 500; }
+        .tl-tam-long {
+            font-size: 11px; color: rgba(255,179,0,0.75); font-weight: 600;
+            margin-left: auto; letter-spacing: 0.2px;
+        }
+        .tl-tam-break {
+            display: flex; align-items: baseline; gap: 10px;
+            flex-wrap: nowrap; white-space: nowrap;
+            padding-top: 6px;
+            border-top: 1px dashed rgba(255,179,0,0.18);
+            font-size: 10px; color: rgba(255,255,255,0.55);
+            line-height: 1.4; overflow: hidden;
+        }
+        .tl-tam-break b { color: #FFD54F; font-weight: 700; }
+        .tl-tam-break .sep { color: rgba(255,179,0,0.4); font-weight: 700; }
+
+        /* ── BLOCK 2 THESIS OPENING ── */
+        .block-thesis {
+            padding: 10px 14px 12px;
+            margin-bottom: 14px;
+            border-left: 3px solid rgba(0, 229, 255, 0.7);
+            background: linear-gradient(90deg, rgba(0,229,255,0.08), rgba(0,229,255,0.01));
+            border-radius: 0 6px 6px 0;
+            font-size: 13.5px; line-height: 1.55;
+            color: rgba(255, 255, 255, 0.92);
+            letter-spacing: 0.2px;
+        }
+        .block-thesis b { color: #00E5FF; font-weight: 700; }
+        .block-thesis-divider {
+            height: 1px;
+            background: linear-gradient(to right, rgba(255,255,255,0.12) 0%, transparent 80%);
+            margin-bottom: 14px;
+        }
+
+        /* RIGHT: BENTO BOX UI */
+        .capabilities {
+            flex: 1; display: grid; 
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1.1fr 0.9fr;
+            gap: 20px;
+        }
+        
+        .cap-card {
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px; display: flex; flex-direction: column; justify-content: flex-end;
+            overflow: hidden; position: relative;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease;
+        }
+        .cap-card.primary {
+            grid-column: 1 / 3; /* Spans full width */
+            justify-content: flex-start; /* Move text to top */
+            background: #050508; /* Ensure seamless blending when image is shrunk */
+            position: relative; /* Anchor for pseudo-elements */
+        }
+        
+        .cap-card.primary::before {
+            content: '';
+            position: absolute;
+            top: 85%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 300px;
+            background: radial-gradient(ellipse at center, rgba(0,229,255,0.18) 0%, rgba(0,229,255,0) 65%);
+            z-index: 1; /* Sits above the pure black bg, but behind the masked image and text */
+            pointer-events: none;
+            mix-blend-mode: screen;
+        }
+        
+        .cap-card:hover { 
+            transform: scale(1.02) translateY(-2px); 
+            border-color: rgba(0,229,255,0.4); 
+            box-shadow: 0 10px 30px -10px rgba(0,229,255,0.2);
+            z-index: 10;
+        }
+
+        .cap-bg {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            background-size: cover; background-position: center 30%;
+            z-index: 2; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* The hardware image is perfectly proportioned. */
+        .cap-card.primary .cap-bg {
+            background-size: 55%; /* Zoomed out (smaller) */
+            background-repeat: no-repeat;
+            background-position: center 10%; /* Decreased percentage moves it down since image is taller than container */
+            /* Made permanent untwisted state */
+            transform: rotate(0deg) scale(1.03);
+            transform-origin: center 50%;
+            /* Smoothly fades the edges of the square image into the card's #050508 background */
+            -webkit-mask-image: radial-gradient(ellipse at center 85%, rgba(0,0,0,1) 45%, rgba(0,0,0,0) 65%);
+            mask-image: radial-gradient(ellipse at center 85%, rgba(0,0,0,1) 45%, rgba(0,0,0,0) 65%);
+        }
+
+        .cap-card:not(.primary):hover .cap-bg { transform: scale(1.06); }
+
+        .cap-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(180deg, rgba(5,5,8,0) 0%, rgba(5,5,8,0.2) 45%, rgba(5,5,8,0.92) 70%, rgba(5,5,8,0.98) 100%);
+            z-index: 3; pointer-events: none;
+        }
+        .cap-card.primary .cap-overlay {
+            background: linear-gradient(180deg, rgba(5,5,8,0.95) 0%, rgba(5,5,8,0.6) 30%, rgba(5,5,8,0) 100%);
+        }
+        
+        .cap-text {
+            position: relative; z-index: 4; padding: 24px 28px;
+        }
+        .cap-card:not(.primary) .cap-text {
+            padding: 20px 22px;
+        }
+        .cap-text h3 { 
+            font-size: 22px; font-weight: 700; color: #FFF; letter-spacing: 1px; margin-bottom: 8px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .cap-card:not(.primary) .cap-text h3 {
+            font-size: 18px;
+        }
+        .cap-text h3::before {
+            content: ''; display: inline-block; width: 6px; height: 16px; background: var(--ice-bright);
+            border-radius: 3px; box-shadow: 0 0 8px var(--ice-bright);
+        }
+        .cap-text p { 
+            font-size: 15px; color: rgba(255,255,255,0.75); line-height: 1.6; 
+        }
+        .cap-card:not(.primary) .cap-text p {
+            font-size: 13px; line-height: 1.5;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="slide-canvas">
+
+        <!-- HEADER -->
+        <div class="header-area">
+            <div class="title-block">
+                <h1>工业疲劳实时预警系统</h1>
+                <p>让安全比危险更先触达</p>
+            </div>
+        </div>
+        <img src="slide_assets/lockup_white.svg" class="top-logo" alt="NeoPulse Logo">
+
+        <!-- MAIN FULL-PAGE GRID -->
+        <div class="main-content">
+            
+            <!-- LEFT: STRUCTURED ARGUMENTS (V1 · Timeline + TAM + 场景落地) -->
+            <div class="left-col-wrapper">
+
+                <!-- B1: Structural Gap (Timeline) -->
+                <div class="argument-block arg-orange">
+                    <h3><i>1</i> 摄像头看不见的预警窗口</h3>
+                    <div class="tl-wrap">
+                        <div class="tl-zones">
+                            <!-- 预警窗口 -->
+                            <div class="tl-zone gold">
+                                <span class="tl-tag">预警窗口</span>
+                                <div class="tl-num">前置</div>
+                                <div class="tl-desc">脑电主动识别微睡眠风险</div>
+                                <div class="tl-sub">在微睡眠发生前完成预警</div>
+                                <div class="tl-src">脑电疲劳文献</div>
+                            </div>
+                            <!-- 响应盲区 -->
+                            <div class="tl-zone red">
+                                <span class="tl-tag">响应盲区</span>
+                                <div class="tl-num">事后</div>
+                                <div class="tl-desc">摄像头仅能闭眼检测</div>
+                                <div class="tl-sub">微睡眠时眼睛可睁开</div>
+                                <div class="tl-src">行业技术共识</div>
+                            </div>
+                            <!-- 事故后果 -->
+                            <div class="tl-zone red">
+                                <span class="tl-tag">事故后果</span>
+                                <div class="tl-num">600 万</div>
+                                <div class="tl-desc">单起重型货运事故直接损失</div>
+                                <div class="tl-sub">致死率 83% · 年 1.2 万人</div>
+                                <div class="tl-src">行业平均 / 公安部</div>
+                            </div>
+                        </div>
+                        <!-- 时间轴 -->
+                        <div class="tl-track">
+                            <div class="tl-dot left"></div>
+                            <div class="tl-dot mid"></div>
+                            <div class="tl-dot right"></div>
+                        </div>
+                        <div class="tl-labels">
+                            <span>早期疲劳</span>
+                            <span>微睡眠发生</span>
+                            <span>事故触发</span>
+                        </div>
+                        <!-- 总市场 / 可触达 收束条 -->
+                        <div class="tl-tam">
+                            <div class="tl-tam-head">
+                                <span class="tl-tam-label">目标市场</span>
+                                <span class="tl-tam-num">8 亿</span>
+                                <span class="tl-tam-win">5 年可达</span>
+                                <span class="tl-tam-long">Y5-6 营收 0.3-0.8 亿 · 市占率 4-10%</span>
+                            </div>
+                            <div class="tl-tam-break">
+                                <span>行业总市场 <b>12-15 亿</b> 保守 · 全口径 43 亿+</span>
+                                <span class="sep">·</span>
+                                <span>货运 + 矿业</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- B2: Scenario Landing (精度 · 体验 · 系统) -->
+                <div class="argument-block arg-cyan">
+                    <h3><i>2</i> 场景落地：精度 · 体验 · 系统</h3>
+                    <div class="block-thesis">
+                        <b>意脉切入</b>：把疲劳预警从被动响应前移到主动预测
+                    </div>
+                    <div class="block-thesis-divider"></div>
+                    <ul class="bullet-list">
+                        <li><strong>精度</strong>：脑电信号实时解码，在微睡眠发生前完成风险预警</li>
+                        <li><strong>体验</strong>：工业级耐振耐噪 · 安全帽兼容佩戴 · 8 小时以上持续采集</li>
+                        <li><strong>系统</strong>：端侧秒级预警 + 云端班组态势感知 + 保险费率联动</li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- RIGHT: CAPABILITIES UI (BENTO GRID) -->
+            <div class="capabilities">
+                <!-- Cap 1: Primary Hardware -->
+                <div class="cap-card primary">
+                    <div class="cap-bg" style="background-image: url('slide_assets/fatigue_hardware.png');"></div>
+                    <div class="cap-overlay"></div>
+                    <div class="cap-text">
+                        <h3>便携形态无感数据采集</h3>
+                        <p>彻底摒弃实验室级臃肿连线，医用级干电极直达工业现场。佩戴舒适无扰，完美兼容现有工业安全帽，无惧高噪高精电场与剧烈运动颠簸。</p>
+                    </div>
+                </div>
+                <!-- Cap 2: Context -->
+                <div class="cap-card">
+                    <div class="cap-bg" style="background-image: url('slide_assets/driving_context.png');"></div>
+                    <div class="cap-overlay"></div>
+                    <div class="cap-text">
+                        <h3>全天候真实场景验证</h3>
+                        <p>历经复杂驾驶与工业环境测试，在震动与强噪叠加的真实工作场景下实现无扰化运行。</p>
+                    </div>
+                </div>
+                <!-- Cap 3: Architecture -->
+                <div class="cap-card">
+                    <div class="cap-bg" style="background-image: url('slide_assets/pdf_images/ui_interface_new.png'); background-position: center -62px; background-size: 115%; background-repeat: no-repeat;"></div>
+                    <div class="cap-overlay"></div>
+                    <div class="cap-text">
+                        <h3>端云互通架构与实时超视距闭环</h3>
+                        <p>不受物理工作台束缚。数据端侧预解码后利用网络回传，大模型极速态势研判，打破传统物理隔离盲区。</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    
+</body>
+</html>
+</template>
+<template id="slide-5" data-label="P6 Fatigue Biz"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <base href="./">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPulse - P6 智产壁垒与商业实证</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+        
+        :root {
+            --bg-base: #050508;
+            --ice-cyan: #4EA8DB;
+            --ice-bright: #00E5FF;
+            --text-main: #FFFFFF;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --glass-bg: rgba(15, 20, 35, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --neon-orange: #FF6D00;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            display: flex; align-items: center; justify-content: center;
+            height: 100vh; overflow: hidden;
+            background-image: 
+                radial-gradient(ellipse at center 20%, rgba(0, 229, 255, 0.08) 0%, transparent 70%),
+                radial-gradient(ellipse at bottom left, rgba(255, 109, 0, 0.03) 0%, transparent 60%);
+        }
+
+        .slide-canvas {
+            position: relative;
+            width: 90vw; max-width: 1440px; aspect-ratio: 16 / 9;
+            background: var(--bg-base);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+            display: flex; flex-direction: column; padding: 40px 50px;
+        }
+
+        /* ── HEADER ── */
+        .header-area {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            margin-bottom: 24px; flex-shrink: 0;
+        }
+        .title-block { display: flex; align-items: baseline; gap: 20px; }
+        .title-block h1 { font-size: 38px; font-weight: 800; color: #FFF; }
+        .title-block p  { font-size: 18px; color: var(--ice-cyan); font-weight: 500; }
+        .top-logo { width: 240px; position: absolute; top: 8px; right: 8px; z-index: 50; }
+
+        /* ── TOP BANNER: DATA PROOF ── */
+        .proof-banner {
+            flex-shrink: 0; height: 130px; margin-bottom: 24px;
+            background: linear-gradient(90deg, rgba(15,20,35,0.8) 30%, rgba(0,229,255,0.1) 100%);
+            border: 1px solid rgba(0,229,255,0.4); border-radius: 12px;
+            display: flex; align-items: center; overflow: hidden; position: relative;
+        }
+        .proof-banner::before {
+            content: ''; position: absolute; left: 0; top: 0; width: 5px; height: 100%; background: var(--ice-bright);
+            box-shadow: 0 0 15px var(--ice-bright);
+        }
+        .proof-img-bg {
+            position: absolute; right: 0; top: 0; height: 100%; width: 40%;
+            mask-image: linear-gradient(to right, transparent, black 70%);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 70%);
+            z-index: 1; opacity: 0.5;
+        }
+        .proof-img-bg img { width: 100%; height: 100%; object-fit: cover; object-position: center 65%; }
+
+        .proof-content {
+            position: relative; z-index: 5; display: flex; align-items: center; width: 100%; padding: 0 40px; gap: 30px;
+        }
+        .proof-title {
+            flex-shrink: 0; padding-right: 30px; border-right: 1px solid rgba(255,255,255,0.15);
+        }
+        .proof-title h2 { font-size: 22px; color: var(--ice-bright); margin-bottom: 6px; letter-spacing: 1px; }
+        .proof-title p { font-size: 14px; color: rgba(255,255,255,0.7); }
+
+        .proof-stats {
+            display: flex; gap: 40px; align-items: center; flex: 1;
+        }
+        .stat-item { display: flex; flex-direction: column; }
+        .stat-item .val {
+            font-size: 34px; font-weight: 800; color: #FFF; font-family: 'Inter', sans-serif;
+            text-shadow: 0 0 15px rgba(255,255,255,0.15); line-height: 1;
+        }
+        .stat-item .val span { font-size: 14px; font-weight: 500; color: var(--ice-bright); margin-left: 4px; font-family: 'Noto Sans SC', sans-serif;}
+        .stat-item .lbl { font-size: 13px; color: var(--text-muted); margin-top: 6px; }
+
+        /* ── BOTTOM: ASSETS ROW ── */
+        .asset-row {
+            flex: 1; display: flex; gap: 16px; min-height: 0;
+        }
+
+        .card-wide { flex: 5; }
+        .card-narrow { flex: 3; }
+
+        .asset-card {
+            border-radius: 14px; overflow: hidden; position: relative;
+            display: flex; flex-direction: column; justify-content: flex-end;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background: var(--bg-base);
+        }
+        .asset-card:hover {
+            border-color: rgba(0,229,255,0.35);
+            box-shadow: 0 8px 30px rgba(0,229,255,0.1);
+        }
+
+        /* Full-bleed background rendering */
+        .card-bg {
+            position: absolute; inset: 0;
+            background-size: cover; background-position: center;
+            transition: transform 0.5s ease;
+            /* Magic CSS: glow and dim the transparent PNG */
+            filter: drop-shadow(0 15px 20px rgba(0,229,255,0.4)) brightness(0.9) contrast(1.1);
+        }
+        .asset-card:hover .card-bg { transform: scale(1.04); }
+
+        /* Dark gradient mask */
+        .card-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to bottom, rgba(5,5,8,0.1) 0%, rgba(5,5,8,0.4) 40%, rgba(5,5,8,0.88) 80%, rgba(5,5,8,0.97) 100%);
+            z-index: 1; pointer-events: none;
+        }
+
+        /* Top-left Number Badge */
+        .card-badge {
+            position: absolute; top: 16px; left: 16px; z-index: 3;
+            display: flex; flex-direction: column; align-items: flex-start; gap: 4px;
+        }
+        .badge-num {
+            font-size: 38px; font-weight: 900; line-height: 1; font-family: 'Inter', sans-serif;
+            text-shadow: 0 0 20px currentColor;
+        }
+        .badge-num sup { font-size: 18px; vertical-align: super; }
+        .badge-label {
+            font-size: 11px; font-weight: 700; letter-spacing: 1.5px;
+            padding: 2px 8px; border-radius: 4px; text-transform: uppercase;
+        }
+
+        /* PCT special badge */
+        .pct-badge {
+            position: absolute; top: 16px; right: 16px; z-index: 3;
+            background: rgba(255,180,0,0.12); border: 1px solid rgba(255,180,0,0.35);
+            border-radius: 4px; padding: 4px 10px; font-size: 11px; font-weight: 700;
+            color: #FFB400; letter-spacing: 0.5px;
+        }
+
+        /* Theme colors */
+        .theme-patent .badge-num { color: #00E5FF; }
+        .theme-patent .badge-label { background: rgba(0,229,255,0.15); color: #00E5FF; border: 1px solid rgba(0,229,255,0.3); }
+        .theme-patent .card-text::before { background: #00E5FF; }
+
+        .theme-software .badge-num { color: #A78BFA; }
+        .theme-software .badge-label { background: rgba(167,139,250,0.15); color: #A78BFA; border: 1px solid rgba(167,139,250,0.3); }
+        .theme-software .card-text::before { background: #A78BFA; }
+        .theme-software:hover { border-color: rgba(167,139,250,0.35); box-shadow: 0 8px 30px rgba(167,139,250,0.1); }
+
+        .theme-award .badge-num { color: #FFB400; }
+        .theme-award .badge-label { background: rgba(255,180,0,0.15); color: #FFB400; border: 1px solid rgba(255,180,0,0.3); }
+        .theme-award .card-text::before { background: #FFB400; }
+        .theme-award:hover { border-color: rgba(255,180,0,0.35); box-shadow: 0 8px 30px rgba(255,180,0,0.1); }
+
+        /* Pure CSS background for Awards card */
+        .award-bg {
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 70% 30%, rgba(255,180,0,0.12) 0%, transparent 60%),
+                        radial-gradient(ellipse at 20% 80%, rgba(255,100,0,0.06) 0%, transparent 50%);
+        }
+        .award-bg::after {
+            content: ''; position: absolute; inset: 0;
+            background-image: linear-gradient(rgba(255,180,0,0.04) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255,180,0,0.04) 1px, transparent 1px);
+            background-size: 28px 28px;
+        }
+
+        /* Bottom Text */
+        .card-text { position: relative; z-index: 2; padding: 16px 20px; }
+        .card-text h3 { font-size: 16px; font-weight: 700; color: #FFF; margin-bottom: 4px; letter-spacing: 0.5px; }
+        .card-text p { font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.5; }
+        .card-text::before {
+            content: ''; position: absolute; top: 0; left: 20px; width: 40px; height: 2px;
+            transition: width 0.35s ease;
+        }
+        .asset-card:hover .card-text::before { width: calc(100% - 40px); }
+
+    </style>
+</head>
+<body>
+    <div class="slide-canvas">
+
+        <!-- HEADER -->
+        <div class="header-area">
+            <div class="title-block">
+                <h1>产业化验证</h1>
+                <p>中试部署完成，核心知识产权全链路覆盖</p>
+            </div>
+        </div>
+        <img src="slide_assets/lockup_white.svg" class="top-logo" alt="NeoPulse Logo">
+
+        <!-- TOP BANNER -->
+        <div class="proof-banner">
+            <div class="proof-img-bg"><img src="slide_assets/team_photo.png" alt="团队合影"></div>
+            <div class="proof-content">
+                <div class="proof-title">
+                    <h2>规模化商业联运实证</h2>
+                    <p>大连理工大学 × 广连网约车</p>
+                </div>
+                <div class="proof-stats">
+                    <div class="stat-item">
+                        <div class="val">51<span>名</span></div>
+                        <div class="lbl">真实测服司机</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="val">3<span>个月</span></div>
+                        <div class="lbl">长周期持续运行</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="val">36,000<span>小时</span></div>
+                        <div class="lbl">真实脑电语料库</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="val">7.84<span>时/日</span></div>
+                        <div class="lbl">人均舒适耐受极值</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM: ASSET CARDS (flex ratio based on image width) -->
+        <div class="asset-row">
+            <!-- Card 1: Patents -->
+            <div class="asset-card card-narrow theme-patent" style="justify-content: flex-start; padding: 20px 20px 0 20px;">
+                
+                <!-- 3x4 Flat Patent Grid Image -->
+                <div style="position: absolute; bottom: 45px; left: 0; right: 0; height: 75%;
+                     background: url('slide_assets/patent_grid.png') no-repeat center center / contain;
+                     z-index: 1;"></div>
+
+                <!-- Top Text Content -->
+                <div style="position: relative; z-index: 3;">
+                    <div style="font-size: 24px; font-weight: 900; color: #00E5FF; line-height: 1.3; text-shadow: 0 0 20px rgba(0,229,255,0.4);">
+                        国际国内发明专利矩阵12+
+                    </div>
+                </div>
+
+                <!-- Bottom Tags (Cyan Theme) -->
+                <div style="position: absolute; bottom: 16px; left: 20px; right: 20px; z-index: 4; display: flex; gap: 6px; flex-wrap: wrap;">
+                    <div style="background: rgba(0,229,255,0.1); border: 1px solid rgba(0,229,255,0.3); backdrop-filter: blur(8px); padding: 4px 10px; border-radius: 4px;">
+                        <span style="font-size: 11px; color: #00E5FF; font-weight: 700; letter-spacing: 0.5px;">脑机接口传感器</span>
+                    </div>
+                    <div style="background: rgba(0,229,255,0.1); border: 1px solid rgba(0,229,255,0.3); backdrop-filter: blur(8px); padding: 4px 10px; border-radius: 4px;">
+                        <span style="font-size: 11px; color: #00E5FF; font-weight: 700; letter-spacing: 0.5px;">睡眠分期与呼吸暂停检测</span>
+                    </div>
+                    <div style="background: rgba(0,229,255,0.1); border: 1px solid rgba(0,229,255,0.3); backdrop-filter: blur(8px); padding: 4px 10px; border-radius: 4px;">
+                        <span style="font-size: 11px; color: #00E5FF; font-weight: 700; letter-spacing: 0.5px;">车辆中人机交互</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Copyright -->
+            <div class="asset-card card-narrow theme-software" style="justify-content: flex-start; padding: 20px 20px 0 20px;">
+                <!-- Dynamic fan-out software stack image -->
+                <div style="position: absolute; bottom: 45px; left: 0; right: 0; height: 80%;
+                     background: url('slide_assets/beautified_software.png') no-repeat bottom center / contain;
+                     z-index: 1;"></div>
+                
+                <!-- Top Text Content -->
+                <div style="position: relative; z-index: 3;">
+                    <div style="font-size: 24px; font-weight: 900; color: #A78BFA; line-height: 1.3; text-shadow: 0 0 20px rgba(167,139,250,0.4);">
+                        核心系统软件著作权×10+
+                    </div>
+                </div>
+
+                <!-- Bottom Tags (Software Theme) -->
+                <div style="position: absolute; bottom: 16px; left: 16px; z-index: 4; display: flex; gap: 6px; flex-wrap: wrap;">
+                    <div style="background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.3); backdrop-filter: blur(8px); padding: 4px 10px; border-radius: 4px;">
+                        <span style="font-size: 11px; color: #A78BFA; font-weight: 700; letter-spacing: 0.5px;">精神疲劳监测系统</span>
+                    </div>
+                    <div style="background: rgba(167,139,250,0.1); border: 1px solid rgba(167,139,250,0.3); backdrop-filter: blur(8px); padding: 4px 10px; border-radius: 4px;">
+                        <span style="font-size: 11px; color: #A78BFA; font-weight: 700; letter-spacing: 0.5px;">睡眠分期与质量评估</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Awards -->
+            <div class="asset-card card-narrow theme-award" style="justify-content: flex-start; padding: 20px 20px 0 20px;">
+                <!-- Lifted document image -->
+                <div style="position: absolute; bottom: 45px; left: 0; right: 0; height: 80%;
+                     background: url('slide_assets/miit_official_stack.png') no-repeat bottom center / contain;
+                     mask-image: linear-gradient(to top, rgba(0,0,0,1) 85%, transparent 100%);
+                     -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 85%, transparent 100%);
+                     z-index: 1;"></div>
+                <!-- Dark vignette overlay -->
+                <div style="position: absolute; inset: 0; background: radial-gradient(ellipse at top, transparent 40%, rgba(5,5,8,0.6) 100%); z-index: 2; pointer-events: none;"></div>
+
+                <!-- Top Text Content -->
+                <div style="position: relative; z-index: 3;">
+                    <div style="font-size: 24px; font-weight: 900; color: #FFB400; line-height: 1.3; text-shadow: 0 0 20px rgba(255,180,0,0.4);">
+                        工信部揭榜挂帅项目×2
+                    </div>
+                </div>
+
+                <!-- Bottom Tags (Yellow Theme) -->
+                <div style="position: absolute; bottom: 16px; left: 16px; z-index: 4; display: flex; gap: 6px; flex-wrap: wrap;">
+                    <div style="background: rgba(255,180,0,0.1); border: 1px solid rgba(255,180,0,0.3); backdrop-filter: blur(8px); padding: 4px 10px; border-radius: 4px;">
+                        <span style="font-size: 11px; color: #FFB400; font-weight: 700; letter-spacing: 0.5px;">精神疲劳检测</span>
+                    </div>
+                    <div style="background: rgba(255,180,0,0.1); border: 1px solid rgba(255,180,0,0.3); backdrop-filter: blur(8px); padding: 4px 10px; border-radius: 4px;">
+                        <span style="font-size: 11px; color: #FFB400; font-weight: 700; letter-spacing: 0.5px;">睡眠分期与呼吸暂停检测</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+</body>
+</html>
+</template>
+<template id="slide-4" data-label="P5 Sleep"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <base href="./">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPulse - P5 案例：睡眠监测系统</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+        
+        :root {
+            --bg-base: #050508;
+            --ice-cyan: #4EA8DB;
+            --ice-bright: #00E5FF;
+            --text-main: #FFFFFF;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --glass-bg: rgba(15, 20, 35, 0.5);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --neon-orange: #FF6D00;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            display: flex; align-items: center; justify-content: center;
+            height: 100vh; overflow: hidden;
+            background-image: 
+                radial-gradient(ellipse at top right, rgba(0, 229, 255, 0.05) 0%, transparent 60%),
+                radial-gradient(ellipse at bottom left, rgba(255, 109, 0, 0.03) 0%, transparent 60%);
+        }
+
+        .slide-canvas {
+            position: relative;
+            width: 90vw; max-width: 1440px; aspect-ratio: 16 / 9;
+            background: var(--bg-base);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+            display: flex; flex-direction: column; padding: 40px 50px;
+        }
+
+        /* ── HEADER ── */
+        .header-area {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            margin-bottom: 30px; position: relative; flex-shrink: 0;
+        }
+        .title-block { display: flex; align-items: baseline; gap: 20px; }
+        .title-block h1 { font-size: 38px; font-weight: 800; color: #FFF; }
+        .title-block p  { font-size: 18px; color: var(--ice-cyan); font-weight: 500; }
+        .top-logo { width: 240px; position: absolute; top: 8px; right: 8px; z-index: 50; }
+
+        /* ── MAIN CONTENT (STRICT P4 ALIGNMENT) ── */
+        .main-content {
+            flex: 1; display: flex; gap: 36px; min-height: 0;
+        }
+
+        /* LEFT: STRUCTURED ARGUMENTS */
+        .left-col-wrapper {
+            flex: 0 0 38%; display: flex; flex-direction: column; justify-content: space-between;
+        }
+
+        .argument-block {
+            background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(20,20,25,0.6) 100%);
+            border: 1px solid var(--glass-border); border-radius: 12px;
+            padding: 20px 24px 22px; position: relative; overflow: hidden;
+        }
+        .argument-block::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+        }
+        .arg-orange::before { background: var(--neon-orange); box-shadow: 0 0 10px var(--neon-orange); }
+        .arg-blue::before { background: var(--ice-bright); box-shadow: 0 0 10px var(--ice-bright); }
+
+        .argument-block h3 {
+            font-size: 20px; font-weight: 700; color: #FFF; margin-bottom: 12px; letter-spacing: 1px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .argument-block h3 i {
+            display: inline-block; width: 26px; height: 26px; background: rgba(255,255,255,0.1);
+            border-radius: 6px; text-align: center; line-height: 26px; font-style: normal; font-size: 14px;
+        }
+
+        .bullet-list {
+            display: flex; flex-direction: column; gap: 14px; list-style: none;
+        }
+        .bullet-list li {
+            font-size: 15px; color: rgba(255,255,255,0.85); line-height: 1.65;
+            padding-left: 22px; position: relative;
+        }
+        .bullet-list li::before {
+            content: '■'; color: var(--ice-bright); position: absolute; left: 0; top: 2px; font-size: 13px;
+        }
+        .arg-orange .bullet-list li::before { color: var(--neon-orange); }
+
+        .highlight-quote {
+            background: rgba(255, 109, 0, 0.1); border: 1px dashed rgba(255, 109, 0, 0.3); border-radius: 8px;
+            padding: 10px 14px; margin-top: 12px; font-size: 13px; color: #FFCC80; line-height: 1.5;
+            font-weight: 500;
+        }
+
+        /* ── TIMELINE V3+ (PSG 前中后三段盲区) ── */
+        .tl-wrap {
+            display: flex; flex-direction: column; gap: 8px;
+            padding: 2px 0 0;
+        }
+        .tl-zones {
+            display: grid; grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+        .tl-zone {
+            padding: 8px 10px 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,61,0,0.2);
+            background: linear-gradient(180deg, rgba(255,61,0,0.08), rgba(255,61,0,0.02));
+            display: flex; flex-direction: column; gap: 3px;
+            position: relative;
+        }
+        .tl-zone.mid {
+            border: 1px solid rgba(0,229,255,0.22);
+            background: linear-gradient(180deg, rgba(0,229,255,0.08), rgba(0,229,255,0.02));
+        }
+        .tl-tag {
+            display: inline-block; align-self: flex-start;
+            padding: 2px 6px; border-radius: 3px;
+            background: rgba(255,109,0,0.2); color: #FF9100;
+            font-size: 9px; font-weight: 700; letter-spacing: 0.8px;
+        }
+        .tl-zone.mid .tl-tag {
+            background: rgba(0,229,255,0.18); color: #00E5FF;
+        }
+        .tl-num {
+            font-size: 26px; font-weight: 800;
+            letter-spacing: -0.5px; line-height: 1;
+            margin-top: 2px;
+            background: linear-gradient(135deg, #FF3D00, #FF9100);
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 12px rgba(255, 80, 0, 0.3));
+        }
+        .tl-zone.mid .tl-num {
+            background: linear-gradient(135deg, #00E5FF, #4EA8DB);
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 12px rgba(0, 229, 255, 0.25));
+        }
+        .tl-desc {
+            font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.88);
+            line-height: 1.35; letter-spacing: 0.2px;
+        }
+        .tl-sub {
+            font-size: 10px; color: rgba(255,255,255,0.45);
+            line-height: 1.3;
+        }
+        .tl-src {
+            font-size: 9px; color: rgba(255,255,255,0.3);
+            font-style: italic; margin-top: 2px;
+        }
+        .tl-track {
+            position: relative; height: 2px;
+            margin: 4px 10px 0;
+            background: linear-gradient(to right,
+                rgba(255,61,0,0.5) 0%,
+                rgba(255,61,0,0.3) 30%,
+                rgba(0,229,255,0.5) 50%,
+                rgba(255,61,0,0.3) 70%,
+                rgba(255,61,0,0.5) 100%);
+        }
+        .tl-dot {
+            position: absolute; top: -4px;
+            width: 10px; height: 10px; border-radius: 50%;
+            background: #050508;
+        }
+        .tl-dot.left  { left: calc(16.66% - 5px); border: 2px solid #FF6D00; box-shadow: 0 0 8px #FF6D00; }
+        .tl-dot.mid   { left: calc(50% - 5px); border: 2px solid #00E5FF; box-shadow: 0 0 8px #00E5FF; }
+        .tl-dot.right { left: calc(83.33% - 5px); border: 2px solid #FF6D00; box-shadow: 0 0 8px #FF6D00; }
+        .tl-labels {
+            display: grid; grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px; margin-top: 4px;
+            font-size: 10px; color: rgba(255,255,255,0.5); font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        .tl-labels span { text-align: center; }
+        .tl-tam {
+            margin-top: 2px; padding: 8px 12px;
+            border-radius: 8px;
+            background: linear-gradient(90deg, rgba(255,179,0,0.12), rgba(255,179,0,0.04));
+            border: 1px solid rgba(255,179,0,0.25);
+            display: flex; flex-direction: column; gap: 4px;
+        }
+        .tl-tam-head { display: flex; align-items: baseline; gap: 10px; }
+        .tl-tam-label {
+            font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.8);
+            letter-spacing: 0.3px; white-space: nowrap;
+        }
+        .tl-tam-num {
+            font-size: 22px; font-weight: 800;
+            background: linear-gradient(135deg, #FFB300, #FFD54F);
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.3px; line-height: 1;
+        }
+        .tl-tam-win { font-size: 10px; color: rgba(255,255,255,0.55); font-weight: 500; }
+        .tl-tam-long {
+            font-size: 11px; color: rgba(255,179,0,0.75); font-weight: 600;
+            margin-left: auto; letter-spacing: 0.2px;
+        }
+        .tl-tam-break {
+            display: flex; align-items: baseline; gap: 10px;
+            flex-wrap: nowrap; white-space: nowrap;
+            padding-top: 6px;
+            border-top: 1px dashed rgba(255,179,0,0.18);
+            font-size: 10px; color: rgba(255,255,255,0.55);
+            line-height: 1.4; overflow: hidden;
+        }
+        .tl-tam-break b { color: #FFD54F; font-weight: 700; }
+        .tl-tam-break .sep { color: rgba(255,179,0,0.4); font-weight: 700; }
+
+        /* ── BLOCK 2 THESIS OPENING (无标题开场白) ── */
+        .block-thesis {
+            padding: 10px 14px 12px;
+            margin-bottom: 14px;
+            border-left: 3px solid rgba(0, 229, 255, 0.7);
+            background: linear-gradient(90deg, rgba(0,229,255,0.08), rgba(0,229,255,0.01));
+            border-radius: 0 6px 6px 0;
+            font-size: 13.5px; line-height: 1.55;
+            color: rgba(255, 255, 255, 0.92);
+            letter-spacing: 0.2px;
+        }
+        .block-thesis b { color: #00E5FF; font-weight: 700; }
+        .block-thesis-divider {
+            height: 1px;
+            background: linear-gradient(to right, rgba(255,255,255,0.12) 0%, transparent 80%);
+            margin-bottom: 14px;
+        }
+
+        /* RIGHT: BENTO BOX UI */
+        .capabilities {
+            flex: 1; display: grid; 
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1.1fr 0.9fr;
+            gap: 20px;
+        }
+        
+        .cap-card {
+            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px; display: flex; flex-direction: column; justify-content: flex-end;
+            overflow: hidden; position: relative;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease;
+        }
+        .cap-card.primary {
+            grid-column: 1 / 3; /* Spans full width */
+            justify-content: flex-end; 
+            background: #050508; 
+        }
+        
+        .cap-card:hover { 
+            transform: scale(1.02) translateY(-2px); 
+            border-color: rgba(0,229,255,0.4); 
+            box-shadow: 0 10px 30px -10px rgba(0,229,255,0.2);
+            z-index: 10;
+        }
+
+        .cap-bg {
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            background-size: cover; background-position: center;
+            z-index: 2; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .cap-card:not(.primary):hover .cap-bg { transform: scale(1.06); }
+
+        .cap-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(180deg, rgba(5,5,8,0) 0%, rgba(5,5,8,0.2) 45%, rgba(5,5,8,0.92) 70%, rgba(5,5,8,0.98) 100%);
+            z-index: 3; pointer-events: none;
+        }
+        .cap-card.primary .cap-overlay {
+            background: linear-gradient(180deg, rgba(5,5,8,0) 0%, rgba(5,5,8,0.4) 60%, rgba(5,5,8,0.95) 100%);
+        }
+        
+        .cap-text {
+            position: relative; z-index: 4; padding: 24px 28px;
+        }
+        .cap-card:not(.primary) .cap-text {
+            padding: 20px 22px;
+        }
+        .cap-text h3 { 
+            font-size: 22px; font-weight: 700; color: #FFF; letter-spacing: 1px; margin-bottom: 8px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .cap-card:not(.primary) .cap-text h3 {
+            font-size: 18px;
+        }
+        .cap-text h3::before {
+            content: ''; display: inline-block; width: 6px; height: 16px; background: var(--ice-bright);
+            border-radius: 3px; box-shadow: 0 0 8px var(--ice-bright);
+        }
+        .cap-text p {
+            font-size: 14px; color: rgba(255,255,255,0.65); line-height: 1.6;
+        }
+
+        /* Sleep Composite Layout */
+        .sleep-composite {
+            position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2;
+            display: flex; overflow: hidden;
+        }
+        .sleep-bg-layer {
+            position: absolute; left: 0; top: 0; width: 65%; height: 100%;
+            background-size: 125%; background-position: left 20% center; background-repeat: no-repeat;
+        }
+        .sleep-bg-layer::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(to right, rgba(5,5,8,0) 40%, rgba(5,5,8,0.95) 85%, rgba(5,5,8,1) 100%);
+        }
+        .sleep-float-layer {
+            position: absolute; right: 0; top: 0; width: 55%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: flex-end;
+            padding: 15px 30px 85px 0; gap: 15px;
+            z-index: 5;
+        }
+        .sleep-img-float {
+            width: 85%; height: 200px; /* Fixed height for clean cropping */
+            border-radius: 10px; border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: -15px 15px 30px rgba(0,0,0,0.6);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0.95;
+            object-fit: cover; 
+        }
+        /* Top image (Outer): Text is on the left. We focus on the right 80% */
+        .sleep-float-layer img:nth-child(1) {
+            object-position: 85% center;
+        }
+        /* Bottom image (Inner): Text is on the right. We focus on the left 20% */
+        .sleep-float-layer img:nth-child(2) {
+            object-position: 15% center;
+        }
+        .cap-card.primary:hover .sleep-img-float {
+            transform: scale(1.03) translateX(-5px); 
+            border-color: rgba(0,229,255,0.3);
+            opacity: 1;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="slide-canvas">
+
+        <!-- HEADER -->
+        <div class="header-area">
+            <div class="title-block">
+                <h1>便携脑电睡眠监测系统</h1>
+                <p>让院外监测达到院内精度</p>
+            </div>
+        </div>
+        <img src="slide_assets/lockup_white.svg" class="top-logo" alt="NeoPulse Logo">
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            
+            <!-- LEFT PANEL (V4 · Timeline + TAM + 场景落地 三维度) -->
+            <div class="left-col-wrapper">
+                <!-- Section 1: Structural Gap (Timeline with TAM) -->
+                <div class="argument-block arg-orange">
+                    <h3><i>1</i> 多导睡眠监测（PSG）之外的盲区</h3>
+                    <div class="tl-wrap">
+                        <div class="tl-zones">
+                            <!-- 前端盲区 -->
+                            <div class="tl-zone">
+                                <span class="tl-tag">前端盲区</span>
+                                <div class="tl-num">1.75亿</div>
+                                <div class="tl-desc">未被客观监测的 OSA 高危人群</div>
+                                <div class="tl-sub">确诊 &lt;1%（美国 20%）</div>
+                                <div class="tl-src">Lancet 2019</div>
+                            </div>
+                            <!-- 中段局限（PSG） -->
+                            <div class="tl-zone mid">
+                                <span class="tl-tag">中段局限</span>
+                                <div class="tl-num">1 夜</div>
+                                <div class="tl-desc">院内 PSG 仅单夜测量</div>
+                                <div class="tl-sub">与日常差异 20-30%（首夜效应）</div>
+                                <div class="tl-src">JCSM 2020（初步）</div>
+                            </div>
+                            <!-- 后端盲区 -->
+                            <div class="tl-zone">
+                                <span class="tl-tag">后端盲区</span>
+                                <div class="tl-num">&lt;50%</div>
+                                <div class="tl-desc">呼吸机（CPAP）一年依从率</div>
+                                <div class="tl-sub">长期跌至 30%，无客观疗效追踪</div>
+                                <div class="tl-src">AASM / Weaver 2010（初步）</div>
+                            </div>
+                        </div>
+                        <!-- 时间轴 -->
+                        <div class="tl-track">
+                            <div class="tl-dot left"></div>
+                            <div class="tl-dot mid"></div>
+                            <div class="tl-dot right"></div>
+                        </div>
+                        <div class="tl-labels">
+                            <span>症状出现</span>
+                            <span>PSG 诊断</span>
+                            <span>治疗启动</span>
+                        </div>
+                        <!-- 总市场 / 可触达 收束条 -->
+                        <div class="tl-tam">
+                            <div class="tl-tam-head">
+                                <span class="tl-tam-label">目标市场</span>
+                                <span class="tl-tam-num">25 亿</span>
+                                <span class="tl-tam-win">5 年可达</span>
+                                <span class="tl-tam-long">Y5-6 营收 1-2 亿 · 市占率 4-8%</span>
+                            </div>
+                            <div class="tl-tam-break">
+                                <span>行业总市场 <b>60-80 亿</b> · 10 年 100-150 亿</span>
+                                <span class="sep">·</span>
+                                <span>早筛 + 随访 两端</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Scenario Landing (精度 · 体验 · 系统) -->
+                <div class="argument-block arg-blue">
+                    <h3><i>2</i> 场景落地：精度 · 体验 · 系统</h3>
+                    <div class="block-thesis">
+                        <b>意脉切入</b>：居家睡眠医疗—院内诊断前的早筛，治疗后的动态随访
+                    </div>
+                    <div class="block-thesis-divider"></div>
+                    <ul class="bullet-list">
+                        <li><strong>精度</strong>：单通道脑电达到 88% 医疗级睡眠分期准确率，同时完成呼吸暂停检测</li>
+                        <li><strong>体验</strong>：佩戴轻柔 · 整夜无扰 · 用户居家独立完成采集</li>
+                        <li><strong>系统</strong>：连续多夜监测 + 医生可读报告 + 治疗效果动态追踪</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- RIGHT: CAPABILITIES UI (BENTO GRID) -->
+            <div class="capabilities">
+                <!-- Cap 1: Primary Hardware (Composite) -->
+                <div class="cap-card primary">
+                    <div class="cap-bg" style="background-image: url('slide_assets/sleep_hero_composite.png'); background-size: cover; background-position: center;"></div>
+                    <div class="cap-overlay"></div>
+                    <div class="cap-text">
+                        <h3>便携形态无感院外睡眠采集</h3>
+                        <p>医疗级柔性金属纸电极，模块化磁吸分体设计，佩戴舒适无异物感，高精度脑电采集，满足整夜8小时以上无扰监测。</p>
+                    </div>
+                </div>
+
+                <!-- Cap 2: AI Staging -->
+                <div class="cap-card">
+                    <div class="cap-bg" style="background-image: url('slide_assets/sleep_dashboard.png'); background-size: cover; background-position: center 46%;"></div>
+                    <div class="cap-overlay"></div>
+                    <div class="cap-text">
+                        <h3>云端AI自动分期引擎</h3>
+                        <p>基于数万例真实临床数据训练，深度剖析单通道EEG信号，实现精准的睡眠分期与异常觉醒检测。</p>
+                    </div>
+                </div>
+
+                <!-- Cap 3: Ecosystem -->
+                <div class="cap-card">
+                    <div class="cap-bg" style="background-image: url('slide_assets/ecosystem_loop.png'); background-size: 100% auto; background-position: center 80%;"></div>
+                    <div class="cap-overlay"></div>
+                    <div class="cap-text">
+                        <h3>干预与服务闭环生态</h3>
+                        <p>连接线下医生与专业技师，实现“监测-诊断-心理干预-脑电反馈”全链路打通，让院外医疗真正落地。</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    
+</body>
+</html>
+</template>
+<template id="slide-6" data-label="P7 Barriers"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <base href="./">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPulse - P8 核心技术攻坚与商业护城河</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+        
+        :root {
+            --bg-base: #050508;
+            --ice-cyan: #4EA8DB;
+            --ice-bright: #00E5FF;
+            --text-main: #FFFFFF;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --glass-bg: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --neon-orange: #FF6D00;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            display: flex; align-items: center; justify-content: center;
+            height: 100vh; overflow: hidden;
+            background-image: 
+                radial-gradient(circle at 40% 20%, rgba(0, 229, 255, 0.04) 0%, transparent 60%);
+        }
+
+        .slide-canvas {
+            position: relative;
+            width: 90vw; max-width: 1440px; aspect-ratio: 16 / 9;
+            background: var(--bg-base);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+            display: flex; flex-direction: column; padding: 40px 50px;
+        }
+
+        /* ── GLOBAL HEADER ── */
+        .header-area {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            margin-bottom: 30px; position: relative; flex-shrink: 0;
+        }
+        .title-block { display: flex; align-items: baseline; gap: 20px; }
+        .title-block h1 { font-size: 38px; font-weight: 800; color: #FFF; }
+        .title-block p  { font-size: 18px; color: var(--ice-cyan); font-weight: 500; }
+        .top-logo { width: 240px; position: absolute; top: 8px; right: 8px; z-index: 50; }
+
+        /* ── MAIN LAYOUT ── */
+        .main-stage {
+            flex: 1; display: flex; gap: 20px; min-height: 0;
+        }
+
+        /* Generic Card Style */
+        .tech-card {
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            border-radius: 12px; display: flex; flex-direction: column;
+            overflow: hidden; transition: all 0.3s ease;
+        }
+        .tech-card:hover { border-color: var(--ice-bright); background: rgba(255,255,255,0.04); }
+
+        .card-header { padding: 20px 24px; flex-shrink: 0; }
+        .title-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+        .title-row h3 { font-size: 23px; font-weight: 800; color: #FFF; }
+        .barrier-tag {
+            display: inline-block; font-size: 13px; font-weight: 800; color: var(--ice-bright);
+            padding: 2px 10px; border: 1px solid rgba(0, 229, 255, 0.3); border-radius: 4px;
+            text-transform: uppercase; letter-spacing: 1.5px;
+        }
+        .card-desc { font-size: 14.5px; color: rgba(255,255,255,0.6); line-height: 1.6; }
+
+        /* COLUMN 1: TALENT */
+        .col-talent { flex: 0 0 31%; }
+        .talent-visual { flex: 1; position: relative; overflow: hidden; background: #000; display: flex; align-items: center; justify-content: center; }
+        .real-map { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; filter: contrast(1.1) brightness(0.9); }
+        .node { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; }
+        .node-dot { width: 8px; height: 8px; background: var(--ice-bright); border-radius: 50%; box-shadow: 0 0 15px var(--ice-bright); animation: pulse 2s infinite; }
+        .node-label { font-size: 14px; font-weight: 700; color: #FFF; text-shadow: 0 0 15px rgba(0,0,0,1); white-space: nowrap; letter-spacing: 2px; }
+
+        @keyframes pulse { 0% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.6); opacity: 1; } 100% { transform: scale(1); opacity: 0.6; } }
+        .node-ca { top: 31%; left: 16%; }
+        .node-de { top: 31%; left: 47%; }
+        .node-fi { top: 19%; left: 51%; }
+        .node-cn { top: 41%; left: 81%; }
+
+        /* COLUMN 2: PHYSICAL */
+        .col-physical { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+        .h-card { flex: 1; display: flex; flex-direction: column; align-items: stretch; }
+        .h-visual { flex: 1; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; overflow: hidden; border-top: 1px solid rgba(255,255,255,0.03); }
+        .h-visual img { width: 100%; height: 100%; object-fit: cover; }
+        .h-content { flex: 0 0 auto; padding: 20px 24px 15px 24px; display: flex; flex-direction: column; justify-content: center; }
+
+        /* COLUMN 3: ALGORITHM (NEURAL CONVERGENCE) */
+        .col-algo { flex: 0 0 35%; }
+        .vortex-container {
+            flex: 1; padding: 10px; display: flex; flex-direction: column; align-items: center;
+            background: rgba(0,0,0,0.3); border-top: 1px solid rgba(255,255,255,0.03);
+            position: relative; overflow: hidden;
+        }
+        .vortex-svg { width: 100%; height: 100%; }
+
+        /* ACCENTS */
+        .l-talent { border-top: 4px solid var(--ice-bright); }
+        .l-material { border-left: 5px solid var(--neon-orange); }
+        .l-hardware { border-left: 5px solid #FFD600; }
+        .l-algo { border-top: 4px solid var(--ice-cyan); }
+
+        /* HERO STAT NUMBERS */
+        .hero-row {
+            display: flex; gap: 24px; align-items: flex-end;
+            margin: 10px 0 10px 0;
+            flex-wrap: wrap;
+        }
+        .hero-stat-block {
+            display: flex; flex-direction: column; gap: 4px;
+        }
+        .hero-num {
+            font-size: 40px; font-weight: 900; line-height: 1;
+            color: #FFF;
+            display: inline-block;
+            letter-spacing: -0.5px;
+        }
+        .hero-num .unit {
+            font-size: 16px; font-weight: 700;
+            margin-left: 4px;
+            opacity: 0.75;
+        }
+        .hero-num.text-hero {
+            font-size: 26px; letter-spacing: 0.5px;
+        }
+        .hero-tag {
+            font-size: 10px; color: rgba(255,255,255,0.45);
+            letter-spacing: 1.8px; text-transform: uppercase;
+            font-weight: 600;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="slide-canvas">
+
+        <!-- MASTER HEADER -->
+        <div class="header-area">
+            <div class="title-block">
+                <h1>核心技术攻坚与商业护城河</h1>
+                <p>自主研发，构建从底层算法到场景应用的全栈专利墙</p>
+            </div>
+        </div>
+        <img src="slide_assets/lockup_white.svg" class="top-logo" alt="NeoPulse Logo">
+
+        <div class="main-stage">
+            
+            <!-- COLUMN 1: TALENT -->
+            <div class="tech-card col-talent l-talent">
+                <div class="card-header">
+                    <div class="title-row">
+                        <div class="barrier-tag">人才壁垒</div>
+                        <h3>01 · 产学研纵延</h3>
+                    </div>
+                    <div class="hero-row">
+                        <div class="hero-stat-block">
+                            <span class="hero-num" style="color:var(--ice-bright); text-shadow:0 0 15px rgba(0,229,255,0.4);">4<span class="unit">教授</span></span>
+                        </div>
+                        <div class="hero-stat-block">
+                            <span class="hero-num" style="color:var(--ice-bright); text-shadow:0 0 15px rgba(0,229,255,0.4);">40+<span class="unit">博士</span></span>
+                        </div>
+                        <div class="hero-stat-block">
+                            <span class="hero-num" style="color:var(--ice-bright); text-shadow:0 0 15px rgba(0,229,255,0.4);">20<span class="unit">年</span></span>
+                            <span class="hero-tag">学术沉淀</span>
+                        </div>
+                    </div>
+                    <p class="card-desc">跨 4 国实验室协同 · 隐性知识不可速成</p>
+                </div>
+                <div class="talent-visual">
+                    <img src="slide_assets/world_map_dark.png" class="real-map">
+                    <div class="node node-ca"><span class="node-label">加拿大</span><div class="node-dot"></div></div>
+                    <div class="node node-de"><span class="node-label">德国</span><div class="node-dot"></div></div>
+                    <div class="node node-fi"><span class="node-label">芬兰</span><div class="node-dot"></div></div>
+                    <div class="node node-cn"><span class="node-label">中国</span><div class="node-dot"></div></div>
+                </div>
+            </div>
+
+            <!-- COLUMN 2: PHYSICAL -->
+            <div class="col-physical">
+                <div class="tech-card h-card l-material">
+                    <div class="h-content">
+                        <div class="title-row">
+                            <div class="barrier-tag" style="color:var(--neon-orange); border-color:rgba(255,109,0,0.3)">时间壁垒</div>
+                            <h3>02 · 电极材料</h3>
+                        </div>
+                        <div class="hero-row">
+                            <div class="hero-stat-block">
+                                <span class="hero-num" style="color:var(--neon-orange); text-shadow:0 0 15px rgba(255,109,0,0.4);">&lt;50<span class="unit">kΩ</span></span>
+                                <span class="hero-tag">电极阻抗 · 临床医疗级</span>
+                            </div>
+                        </div>
+                        <p class="card-desc">自研纳米导电层 · 20 年材料研发不可速成</p>
+                    </div>
+                    <div class="h-visual" style="background-image: url('slide_assets/electrode.png'); background-size: 105%; background-position: center;"></div>
+                </div>
+                <div class="tech-card h-card l-hardware">
+                    <div class="h-content">
+                        <div class="title-row">
+                            <div class="barrier-tag" style="color:#FFD600; border-color:rgba(255,214,0,0.3)">工程壁垒</div>
+                            <h3>03 · 硬件系统</h3>
+                        </div>
+                        <div class="hero-row">
+                            <div class="hero-stat-block">
+                                <span class="hero-num" style="color:#FFD600; text-shadow:0 0 15px rgba(255,214,0,0.4);">80<span class="unit">g</span></span>
+                                <span class="hero-tag">设备重量</span>
+                            </div>
+                            <div class="hero-stat-block">
+                                <span class="hero-num" style="color:#FFD600; text-shadow:0 0 15px rgba(255,214,0,0.4);">8<span class="unit">h</span></span>
+                                <span class="hero-tag">续航时长</span>
+                            </div>
+                            <div class="hero-stat-block">
+                                <span class="hero-num" style="color:#FFD600; text-shadow:0 0 15px rgba(255,214,0,0.4);">30<span class="unit">s</span></span>
+                                <span class="hero-tag">极速佩戴</span>
+                            </div>
+                        </div>
+                        <p class="card-desc">工业级耐振耐噪 · 整夜舒适 · 量产闭环</p>
+                    </div>
+                    <div class="h-visual" style="display: flex; align-items: stretch; background: #000; gap: 2px;">
+                        <img src="slide_assets/fatigue_hardware.png" style="width: 50%; height: 100%; object-fit: contain; background: #000;">
+                        <img src="slide_assets/sleep_product_clean.png" style="width: 50%; height: 100%; object-fit: contain;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUMN 3: ALGO ENGINE (VORTEX END-TO-END) -->
+            <div class="tech-card col-algo l-algo">
+                <div class="card-header">
+                    <div class="title-row">
+                        <div class="barrier-tag" style="color:var(--ice-cyan); border-color:rgba(78,168,219,0.3)">人工智能</div>
+                        <h3>04 · 解码引擎</h3>
+                    </div>
+                    <div class="hero-row">
+                        <div class="hero-stat-block">
+                            <span class="hero-num text-hero" style="color:var(--ice-bright); text-shadow:0 0 15px rgba(0,229,255,0.4);">手机端 APP</span>
+                            <span class="hero-tag">端侧实时推理</span>
+                        </div>
+                        <div class="hero-stat-block">
+                            <span class="hero-num" style="color:var(--ice-bright); text-shadow:0 0 15px rgba(0,229,255,0.4);">40k+<span class="unit">样本</span></span>
+                            <span class="hero-tag">全谱系预训练</span>
+                        </div>
+                    </div>
+                    <p class="card-desc">端到端全场景贯通 · 模型本地运行 · 数据隐私不出端</p>
+                </div>
+                <div class="vortex-container">
+                    <svg class="vortex-svg" viewBox="0 0 200 360">
+                        <!-- Chaotic Input (Chaos Lines with Scanning Flow) -->
+                        <g opacity="0.4" fill="none" stroke-width="1.5">
+                            <path d="M20 40 Q45 20 70 50 T120 30 T180 50" stroke="#FF4D4D" stroke-dasharray="10, 10">
+                                <animate attributeName="stroke-dashoffset" from="200" to="0" dur="4s" repeatCount="indefinite" />
+                            </path>
+                            <path d="M20 70 Q55 50 90 80 T140 60 T180 75" stroke="#FF6D00" stroke-dasharray="15, 10">
+                                <animate attributeName="stroke-dashoffset" from="250" to="0" dur="5s" repeatCount="indefinite" />
+                            </path>
+                            <path d="M20 100 Q65 120 110 90 T160 110 T180 85" stroke="#D32F2F" stroke-dasharray="20, 15">
+                                <animate attributeName="stroke-dashoffset" from="300" to="0" dur="6s" repeatCount="indefinite" />
+                            </path>
+                        </g>
+                        <text x="50%" y="15" font-size="11" fill="#FF4D4D" text-anchor="middle" font-weight="900" letter-spacing="2">多维原始信号输入</text>
+
+                        <!-- Convergence Streams -->
+                        <g stroke="rgba(0,229,255,0.2)" fill="none" stroke-width="1">
+                            <path d="M40 90 Q100 130 100 160" />
+                            <path d="M100 100 L100 160" />
+                            <path d="M160 90 Q100 130 100 160" />
+                        </g>
+
+                        <!-- The Intelligence Nucleus (Foundation Core) -->
+                        <g transform="translate(100, 180)">
+                            <defs>
+                                <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" style="stop-color:#00E5FF; stop-opacity:0.6" />
+                                    <stop offset="100%" style="stop-color:rgba(0,229,255,0); stop-opacity:0" />
+                                </radialGradient>
+                            </defs>
+                            <circle r="50" fill="url(#coreGlow)" />
+                            <circle r="22" fill="rgba(0,229,255,0.1)" stroke="var(--ice-bright)" stroke-width="2">
+                                <animate attributeName="r" values="20;24;20" dur="2s" repeatCount="indefinite" />
+                            </circle>
+                            <text y="5" font-size="13" fill="#FFF" text-anchor="middle" font-weight="900" letter-spacing="1">智能解码核</text>
+                            <text y="45" font-size="8" fill="rgba(255,255,255,0.4)" text-anchor="middle" letter-spacing="1">端侧 · 全谱预训练</text>
+                            
+                            <!-- Internal Processing Dots -->
+                            <circle cx="-10" cy="-8" r="1.5" fill="#FFF" opacity="0.8" />
+                            <circle cx="12" cy="-6" r="1.5" fill="#FFF" opacity="0.8" />
+                            <circle cx="5" cy="12" r="1.5" fill="#FFF" opacity="0.8" />
+                        </g>
+
+                        <!-- Radiating Insights (The "End" State) -->
+                        <g transform="translate(100, 240)">
+                            <path d="M-40 20 Q-30 60 0 90" stroke="var(--ice-bright)" fill="none" stroke-width="1.5" opacity="0.6" stroke-dasharray="4 4" />
+                            <path d="M40 20 Q30 60 0 90" stroke="var(--ice-bright)" fill="none" stroke-width="1.5" opacity="0.6" stroke-dasharray="4 4" />
+                            <circle cx="0" cy="80" r="15" fill="rgba(255,109,0,0.1)" stroke="var(--neon-orange)" />
+                            <text y="84" font-size="10" fill="#FFF" text-anchor="middle" font-weight="900">临床诊断</text>
+                            
+                            <!-- Actionable Insight Tags -->
+                            <g transform="translate(-55, 60)">
+                                <rect width="40" height="14" rx="3" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" />
+                                <text x="20" y="10" font-size="7" fill="#FFF" text-anchor="middle">睡眠监测</text>
+                            </g>
+                            <g transform="translate(15, 60)">
+                                <rect width="40" height="14" rx="3" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.2)" />
+                                <text x="20" y="10" font-size="7" fill="#FFF" text-anchor="middle">疲劳快检</text>
+                            </g>
+                        </g>
+                        
+                        <text x="50%" y="350" font-size="12" fill="var(--ice-bright)" text-anchor="middle" font-weight="900" letter-spacing="3">多场景端到端输出</text>
+                        
+                    </svg>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    
+</body>
+</html>
+</template>
+<template id="slide-7" data-label="P8 Business"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <base href="./">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>对比墙 C · 痛点→解药矩阵</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+
+        :root {
+            --bg-base: #050508;
+            --ice-cyan: #4EA8DB;
+            --ice-bright: #00E5FF;
+            --text-main: #FFFFFF;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --glass-bg: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --neon-orange: #FF681A;
+            --color-odm: #00D97E;
+            --color-saas: #00B8D9;
+            --color-full: #FF681A;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            display: flex; align-items: center; justify-content: center;
+            height: 100vh; overflow: hidden;
+            background-image: radial-gradient(circle at 70% 20%, rgba(0, 229, 255, 0.04) 0%, transparent 50%);
+        }
+
+        .slide-canvas {
+            position: relative;
+            width: 90vw; max-width: 1440px; aspect-ratio: 16 / 9;
+            background: var(--bg-base);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.8);
+            display: flex; flex-direction: column; padding: 35px 50px 20px 50px;
+        }
+
+        .top-logo { width: 240px; position: absolute; top: 8px; right: 8px; z-index: 100; }
+
+        .header-area {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            margin-bottom: 20px; position: relative; flex-shrink: 0;
+        }
+        .title-block { display: flex; align-items: baseline; gap: 20px; }
+        .title-block h1 { font-size: 38px; font-weight: 800; color: #FFF; }
+        .title-block p  { font-size: 18px; color: var(--ice-cyan); font-weight: 500; }
+
+        .main-stage { flex: 1; display: flex; flex-direction: column; min-height: 0; gap: 15px; }
+
+        /* === COMP WALL C · 痛点→解药矩阵（3 列对称版） === */
+        /* 三列：pain | arrow | cure，左右两半完全对称（50/50），中线与下方 flywheel|viz 对齐 */
+        .comp-wall { display: grid; grid-template-columns: 1.2fr 40px 1fr; height: 125px; flex-shrink: 0;
+          background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 12px; overflow: hidden; }
+        .mx-cell { padding: 6px 16px; display: flex; align-items: center; gap: 8px; font-size: 13px; line-height: 1.3;
+          border-bottom: 1px solid rgba(255,255,255,.05); border-right: 1px solid rgba(255,255,255,.05); }
+        .mx-cell:last-child, .mx-cell:nth-last-child(-n+3) { border-bottom: none; }
+        .mx-cell.head { background: rgba(255,255,255,.025); font-size: 10.5px; font-weight: 800; color: var(--text-muted);
+          letter-spacing: 1.5px; text-transform: uppercase; padding: 5px 16px; }
+        .mx-cell.head.pain { color: #FF8888; }
+        .mx-cell.head.cure { color: var(--ice-bright); }
+        .mx-cell.pain { color: rgba(255,255,255,.85); }
+        .mx-cell.pain::before { content: '✕'; color: #FF4D4D; font-weight: 900; margin-right: 4px; flex-shrink: 0; }
+        .mx-cell.cure { color: #FFF; font-weight: 600; background: rgba(0,229,255,.025); }
+        .mx-cell.cure::before { content: '✓'; color: var(--ice-bright); font-weight: 900; margin-right: 4px; text-shadow: 0 0 6px rgba(0,229,255,.5); flex-shrink: 0; }
+        .mx-cell.arrow { background: rgba(255,255,255,.025); justify-content: center; color: var(--ice-bright); font-size: 15px; font-weight: 900; padding: 0;
+          text-shadow: 0 0 8px rgba(0,229,255,.5); }
+        .mx-cell.arrow.head { color: var(--text-muted); font-size: 10.5px; padding: 5px 0; }
+        /* 维度 badge: 行内嵌入 pain 单元起始处 */
+        .dim-badge { display: inline-block; padding: 2px 8px; background: rgba(0,229,255,0.1); color: var(--ice-cyan);
+          font-size: 10.5px; font-weight: 800; letter-spacing: 1px; border-radius: 4px; margin-right: 6px; flex-shrink: 0; }
+
+        .split-viewport { flex: 1; display: flex; gap: 20px; min-height: 0; }
+
+        .engine-col { flex: 1.2; background: rgba(255,255,255,0.01); border: 1px solid var(--glass-border); border-radius: 16px; position: relative; display: flex; flex-direction: column; overflow: hidden; padding: 8px; }
+        .flywheel-container { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 0; }
+        .flywheel-container svg { width: 100%; height: 100%; display: block; }
+
+        .logic-col { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+
+        /* === 3 模式: 底部横排 strip（紧凑版） === */
+        .mode-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; height: 90px; flex-shrink: 0; }
+        .mode-item {
+            background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border);
+            border-radius: 8px; padding: 8px 12px; display: flex; align-items: center; gap: 10px;
+        }
+        .mode-item.m1 { border-left: 3px solid var(--color-full); }
+        .mode-item.m2 { border-left: 3px solid var(--color-saas); }
+        .mode-item.m3 { border-left: 3px solid var(--color-odm); }
+        .mode-icon { width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; flex-shrink: 0; }
+        .m1 .mode-icon { background: rgba(255, 104, 26, 0.12); color: var(--color-full); }
+        .m2 .mode-icon { background: rgba(0, 184, 217, 0.12); color: var(--color-saas); }
+        .m3 .mode-icon { background: rgba(0, 217, 126, 0.12); color: var(--color-odm); }
+        .mode-info { flex: 1; min-width: 0; }
+        .mode-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; gap: 8px; }
+        .mode-name { font-size: 13.5px; font-weight: 800; color: #FFF; white-space: nowrap; }
+        .tag-phase { font-size: 9.5px; font-weight: 900; padding: 1px 5px; background: rgba(255,255,255,0.05); color: var(--ice-bright); border-radius: 3px; flex-shrink: 0; }
+        .mode-desc { font-size: 11px; color: var(--text-muted); line-height: 1.35; margin-bottom: 2px; }
+        .mode-client { font-size: 10px; color: #FFF; font-weight: 700; display: flex; gap: 4px; }
+        .cl-lab { color: var(--text-muted); font-weight: 400; }
+
+        .revenue-island {
+            flex: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border);
+            border-radius: 12px; padding: 14px 18px; display: flex; flex-direction: column; gap: 8px; min-height: 0;
+        }
+        .island-title { font-size: 13px; font-weight: 900; color: #FFF; display: flex; justify-content: space-between; align-items: flex-start; }
+        .island-title .anchor { font-size: 10px; font-weight: 600; color: var(--text-muted); margin-top: 2px; letter-spacing: 0; }
+        .island-title .legend { display: flex; gap: 10px; font-size: 9.5px; color: var(--text-muted); font-weight: 700; }
+        .island-title .legend div { display: flex; align-items: center; gap: 3px; }
+        .island-title .legend i { width: 7px; height: 7px; display: inline-block; border-radius: 1px; }
+
+        /* === VIZ B: stacked area SVG === */
+        .viz-b-chart { flex: 1; position: relative; min-height: 0; padding: 2px 0; }
+        .viz-b-chart svg { width: 100%; height: 100%; display: block; }
+
+        /* SVG ANIMATIONS */
+        .loop-path { stroke-dasharray: 10, 10; animation: flow 20s linear infinite; }
+        @keyframes flow { to { stroke-dashoffset: -200; } }
+        .pulse-core { animation: pulse 3s ease-in-out infinite; }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 0.3; } 50% { transform: scale(1.05); opacity: 0.5; } 100% { transform: scale(1); opacity: 0.3; } }
+        .node-card { fill: rgba(0, 229, 255, 0.08); stroke: var(--ice-cyan); stroke-width: 1.5; }
+        .node-text { fill: #FFF; font-size: 13px; font-weight: 800; text-anchor: middle; }
+        .mapping-text { fill: var(--neon-orange); font-size: 11px; font-weight: 900; opacity: 0.9; }
+    </style>
+</head>
+<body>
+    <div class="slide-canvas">
+        <img src="slide_assets/lockup_white.svg" class="top-logo" alt="NeoPulse Logo">
+
+        <div class="header-area">
+            <div class="title-block">
+                <h1>盈利模式</h1>
+                <p>从硬件一次交付到判读订阅增长</p>
+            </div>
+        </div>
+
+        <div class="main-stage">
+            <div class="comp-wall">
+                <!-- header row (3 cells) -->
+                <div class="mx-cell head pain">行业痛点</div>
+                <div class="mx-cell arrow head">→</div>
+                <div class="mx-cell head cure">意脉方案</div>
+
+                <!-- row 1: 硬件 -->
+                <div class="mx-cell pain"><span class="dim-badge">硬件</span><span>一次性交易，陷入价格内卷</span></div>
+                <div class="mx-cell arrow">➜</div>
+                <div class="mx-cell cure"><span>硬件入口 + SaaS 持续变现，LTV 数倍放大</span></div>
+
+                <!-- row 2: 数据 -->
+                <div class="mx-cell pain"><span class="dim-badge">数据</span><span>沉淀各家孤岛，模型无法进化</span></div>
+                <div class="mx-cell arrow">➜</div>
+                <div class="mx-cell cure"><span>数据回流训练模型，越用越准</span></div>
+
+                <!-- row 3: 客户粘性 -->
+                <div class="mx-cell pain"><span class="dim-badge">粘性</span><span>交付即流失，复购难</span></div>
+                <div class="mx-cell arrow">➜</div>
+                <div class="mx-cell cure"><span>订阅锁定 + 数据切换成本</span></div>
+            </div>
+
+            <div class="split-viewport">
+                <!-- ENGINE COL: 标题 + 4角文字 + 飞轮 + 4箭头 全部在同一 SVG 中 -->
+                <div class="engine-col">
+                    <div class="flywheel-container">
+                        <svg viewBox="0 0 580 410" preserveAspectRatio="xMidYMid meet">
+                            <defs>
+                                <marker id="arrow-orange" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                                    <path d="M0,0 L0,6 L6,3 z" fill="var(--neon-orange)" />
+                                </marker>
+                            </defs>
+
+                            <!-- ============ 顶部居中标题（字号放大） ============ -->
+                            <text x="290" y="24" text-anchor="middle" fill="var(--ice-bright)" font-size="18" font-weight="900" letter-spacing="1.5">数据飞轮：越用越准，持续增值</text>
+                            <line x1="160" y1="32" x2="420" y2="32" stroke="var(--ice-bright)" stroke-width="1.8"/>
+
+                            <!-- ============ 飞轮（1.2x） · 中心向下偏移到 y=240 ============ -->
+                            <circle cx="290" cy="240" r="72" fill="rgba(0, 229, 255, 0.05)" class="pulse-core" />
+                            <circle cx="290" cy="240" r="54" fill="none" stroke="var(--ice-bright)" stroke-width="1.5" stroke-dasharray="2 3" />
+                            <text x="290" y="234" fill="#FFF" font-size="17" font-weight="900" text-anchor="middle">全谱 EEG</text>
+                            <text x="290" y="256" fill="#FFF" font-size="17" font-weight="900" text-anchor="middle">基础模型</text>
+                            <circle cx="290" cy="240" r="144" fill="none" stroke="rgba(0, 229, 255, 0.15)" stroke-width="42" stroke-dasharray="10 15" class="loop-path" />
+                            <circle cx="290" cy="240" r="144" fill="none" stroke="var(--ice-bright)" stroke-width="1" opacity="0.3" />
+                            <!-- 4 节点（中心 290,240） · 节点字号 16 -->
+                            <g transform="translate(290, 96)"><rect x="-52" y="-18" width="104" height="36" rx="6" class="node-card" /><text y="6" class="node-text" font-size="16">场景部署</text></g>
+                            <g transform="translate(434, 240)"><rect x="-52" y="-18" width="104" height="36" rx="6" class="node-card" /><text y="6" class="node-text" font-size="16">数据积累</text></g>
+                            <g transform="translate(290, 384)"><rect x="-52" y="-18" width="104" height="36" rx="6" class="node-card" /><text y="6" class="node-text" font-size="16">模型进化</text></g>
+                            <g transform="translate(146, 240)"><rect x="-52" y="-18" width="104" height="36" rx="6" class="node-card" /><text y="6" class="node-text" font-size="16">精度变现</text></g>
+
+                            <!-- ============ 4 角橙色文字（字号 17）============ -->
+                            <!-- 弧 45° 端点：NW(188,138) NE(392,138) SE(392,342) SW(188,342) -->
+                            <text x="14" y="70" text-anchor="start" fill="var(--neon-orange)" font-size="17" font-weight="900" letter-spacing="0.5">硬件边缘计算</text>
+                            <text x="566" y="70" text-anchor="end" fill="var(--neon-orange)" font-size="17" font-weight="900" letter-spacing="0.5">跨领域算法迁移</text>
+                            <text x="14" y="402" text-anchor="start" fill="var(--neon-orange)" font-size="17" font-weight="900" letter-spacing="0.5">自动化判读报告</text>
+                            <text x="566" y="402" text-anchor="end" fill="var(--neon-orange)" font-size="17" font-weight="900" letter-spacing="0.5">第三方临床对位</text>
+
+                            <!-- ============ 4 根箭头：从文字末尾 到 圆弧端点 ============ -->
+                            <!-- 字号 17 ~ 每字 17 宽。TL "硬件边缘计算"(6字)=102 宽,end at 116。箭头 (122,72) → NW (185,135) -->
+                            <path d="M122,72 L185,135" fill="none" stroke="var(--neon-orange)" stroke-width="2" marker-end="url(#arrow-orange)" stroke-dasharray="5 3" />
+                            <!-- TR "跨领域算法迁移"(7字)=119 宽, start at 447。箭头 (441,72) → NE (395,135) -->
+                            <path d="M441,72 L395,135" fill="none" stroke="var(--neon-orange)" stroke-width="2" marker-end="url(#arrow-orange)" stroke-dasharray="5 3" />
+                            <!-- BL "自动化判读报告"(7字)=119 宽,end at 133。箭头 (139,397) → SW (185,345) -->
+                            <path d="M139,397 L185,345" fill="none" stroke="var(--neon-orange)" stroke-width="2" marker-end="url(#arrow-orange)" stroke-dasharray="5 3" />
+                            <!-- BR "第三方临床对位"(7字)=119 宽, start at 447。箭头 (441,397) → SE (395,345) -->
+                            <path d="M441,397 L395,345" fill="none" stroke="var(--neon-orange)" stroke-width="2" marker-end="url(#arrow-orange)" stroke-dasharray="5 3" />
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- LOGIC COL: 现在只放 revenue-island -->
+                <div class="logic-col">
+                    <!-- REVENUE ISLAND with VIZ B (stacked area) - 现在占整个右侧 -->
+                    <div class="revenue-island">
+                        <div class="island-title">
+                            <div style="display:flex;flex-direction:column">
+                                <span>营收预测 · 总量 × 构成演化</span>
+                                <span class="anchor">目标市场 · 30-35 亿/年（睡眠 25 + 疲劳 8）→ Y5-6 市占率 5-10%</span>
+                            </div>
+                            <div class="legend">
+                                <div><i style="background:var(--color-full)"></i>全栈</div>
+                                <div><i style="background:var(--color-saas)"></i>平台</div>
+                                <div><i style="background:var(--color-odm)"></i>ODM</div>
+                            </div>
+                        </div>
+
+                        <div class="viz-b-chart">
+                            <svg viewBox="0 0 380 152" preserveAspectRatio="none">
+                                <defs>
+                                    <linearGradient id="gF" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FF7A36"/><stop offset="100%" stop-color="#FF681A" stop-opacity=".8"/></linearGradient>
+                                    <linearGradient id="gS" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1FCFE6"/><stop offset="100%" stop-color="#00B8D9" stop-opacity=".8"/></linearGradient>
+                                    <linearGradient id="gO" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#19E59C"/><stop offset="100%" stop-color="#00D97E" stop-opacity=".8"/></linearGradient>
+                                </defs>
+
+                                <!-- 网格收紧：左 18，右 370 -->
+                                <line x1="18" x2="370" y1="130" y2="130" stroke="rgba(255,255,255,.12)"/>
+                                <line x1="18" x2="370" y1="90"  y2="90"  stroke="rgba(255,255,255,.04)" stroke-dasharray="2 3"/>
+                                <line x1="18" x2="370" y1="50"  y2="50"  stroke="rgba(255,255,255,.04)" stroke-dasharray="2 3"/>
+                                <line x1="18" x2="370" y1="10"  y2="10"  stroke="rgba(255,255,255,.04)" stroke-dasharray="2 3"/>
+
+                                <!-- Y 轴 标签 字号 7→6, x 26→14 -->
+                                <text x="14" y="132" fill="rgba(255,255,255,.35)" font-size="6" text-anchor="end">¥0</text>
+                                <text x="14" y="92"  fill="rgba(255,255,255,.35)" font-size="6" text-anchor="end">1亿</text>
+                                <text x="14" y="52"  fill="rgba(255,255,255,.35)" font-size="6" text-anchor="end">2亿</text>
+                                <text x="14" y="12"  fill="rgba(255,255,255,.35)" font-size="6" text-anchor="end">3亿</text>
+
+                                <!-- 数据点 x 拉宽：Y1-2 (40), Y3-4 (195), Y5-6 (340) -->
+                                <text x="40"  y="140" fill="rgba(255,255,255,.8)" font-size="8" font-weight="900" text-anchor="middle">Y1-2</text>
+                                <text x="195" y="140" fill="rgba(255,255,255,.8)" font-size="8" font-weight="900" text-anchor="middle">Y3-4</text>
+                                <text x="340" y="140" fill="rgba(255,255,255,.8)" font-size="8" font-weight="900" text-anchor="middle">Y5-6</text>
+
+                                <!-- breakdown % per year -->
+                                <text x="40"  y="150" font-size="6.5" font-weight="800" text-anchor="middle">
+                                  <tspan fill="#FF7A36">全80%</tspan><tspan fill="rgba(255,255,255,.3)"> · </tspan><tspan fill="#1FCFE6">平15%</tspan><tspan fill="rgba(255,255,255,.3)"> · </tspan><tspan fill="#19E59C">O5%</tspan>
+                                </text>
+                                <text x="195" y="150" font-size="6.5" font-weight="800" text-anchor="middle">
+                                  <tspan fill="#FF7A36">全45%</tspan><tspan fill="rgba(255,255,255,.3)"> · </tspan><tspan fill="#1FCFE6">平40%</tspan><tspan fill="rgba(255,255,255,.3)"> · </tspan><tspan fill="#19E59C">O15%</tspan>
+                                </text>
+                                <text x="340" y="150" font-size="6.5" font-weight="800" text-anchor="middle">
+                                  <tspan fill="#FF7A36">全15%</tspan><tspan fill="rgba(255,255,255,.3)"> · </tspan><tspan fill="#1FCFE6">平65%</tspan><tspan fill="rgba(255,255,255,.3)"> · </tspan><tspan fill="#19E59C">O20%</tspan>
+                                </text>
+
+                                <!-- 路径按新锚点 (40, 195, 340) 重算。CP: 110/155 (span 1), 250/295 (span 2) -->
+                                <path d="M 40,130 L 40,125.5 C 110,125.3 155,124 195,118.3 C 250,118.5 295,118.1 340,118 L 340,130 Z" fill="url(#gF)"/>
+                                <path d="M 40,125.5 C 110,125.3 155,124 195,118.3 C 250,118.5 295,118.1 340,118 L 340,66 C 295,75 250,90 195,107.9 C 155,118 110,124 40,124.7 Z" fill="url(#gS)"/>
+                                <path d="M 40,124.7 C 110,124.5 155,118 195,107.9 C 250,90 295,75 340,66 L 340,50 C 295,60 250,75 195,104 C 155,113 110,124 40,124.4 Z" fill="url(#gO)"/>
+
+                                <circle cx="40"  cy="124.4" r="2.5" fill="#FFF"/>
+                                <circle cx="195" cy="104"   r="2.5" fill="#FFF"/>
+                                <circle cx="340" cy="50"    r="2.5" fill="#FFF"/>
+
+                                <text x="40"  y="120" fill="#FFF" font-size="8" font-weight="900" text-anchor="middle">¥800-2000万</text>
+                                <text x="195" y="100" fill="#FFF" font-size="8" font-weight="900" text-anchor="middle">¥3000万-1亿</text>
+                                <text x="340" y="46"  fill="#FFF" font-size="8" font-weight="900" text-anchor="middle">¥1-3亿</text>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部 3 模式横排 -->
+            <div class="mode-strip">
+                <div class="mode-item m1">
+                    <div class="mode-icon">01</div>
+                    <div class="mode-info">
+                        <div class="mode-top"><div class="mode-name">全栈方案落地</div><div class="tag-phase">Y1 主力</div></div>
+                        <div class="mode-desc">硬件 + 平台 + 部署。一站式交付，适合核心客户。</div>
+                        <div class="mode-client"><span class="cl-lab">典型客户:</span> 矿企 / 运输企业直接采购</div>
+                    </div>
+                </div>
+                <div class="mode-item m2">
+                    <div class="mode-icon">02</div>
+                    <div class="mode-info">
+                        <div class="mode-top"><div class="mode-name">独立平台服务</div><div class="tag-phase">Y2 增长</div></div>
+                        <div class="mode-desc">客户自有设备接入意脉专有平台，订阅或判读付费。</div>
+                        <div class="mode-client"><span class="cl-lab">典型路径:</span> 药企合作 / 临床 EEG 数据服务</div>
+                    </div>
+                </div>
+                <div class="mode-item m3">
+                    <div class="mode-icon">03</div>
+                    <div class="mode-info">
+                        <div class="mode-top"><div class="mode-name">电极模组 ODM</div><div class="tag-phase">Y3 放量</div></div>
+                        <div class="mode-desc">第三方采购电极/模组，快速集成至其产品线。</div>
+                        <div class="mode-client"><span class="cl-lab">典型客户:</span> BCI / 医疗设备厂商</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
+
+</template>
+<template id="slide-8" data-label="P11 Team"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <base href="./">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPulse - P11 核心运营团队</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+        
+        :root {
+            --bg-base: #050508;
+            --ice-cyan: #4EA8DB;
+            --ice-bright: #00E5FF;
+            --text-main: #FFFFFF;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            display: flex; align-items: center; justify-content: center;
+            height: 100vh; overflow: hidden;
+            background-image: radial-gradient(circle at 80% 20%, rgba(0, 229, 255, 0.05) 0%, transparent 50%);
+        }
+
+        .slide-canvas {
+            position: relative;
+            width: 90vw; max-width: 1440px; aspect-ratio: 16 / 9;
+            background: var(--bg-base);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.9);
+            display: flex; flex-direction: column; padding: 40px 50px 25px 50px;
+        }
+
+        /* 绝对保护右上角的 Logo 位置 */
+        .top-logo { width: 240px; position: absolute; top: 8px; right: 8px; z-index: 100; }
+
+        .header-area {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            margin-bottom: 25px; position: relative; flex-shrink: 0; width: 100%;
+        }
+        
+        .title-block { display: flex; align-items: baseline; gap: 20px; }
+        .title-block h1 { font-size: 38px; font-weight: 800; color: #FFF; }
+        .title-block p  { font-size: 18px; color: var(--ice-cyan); font-weight: 500; }
+
+
+        /* 3x2 Grid */
+        .team-grid { 
+            flex: 1; 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            grid-template-rows: 1.6fr 1fr 1fr; 
+            gap: 15px 30px; 
+            min-height: 0; 
+        }
+
+        /* 极致宽扁，内边距微调，增大间距 */
+        .member-card {
+            background: var(--glass-bg); 
+            border: 1px solid var(--glass-border);
+            border-radius: 16px; 
+            padding: 12px 20px; 
+            display: flex;
+            flex-direction: row; 
+            align-items: stretch; 
+            gap: 22px; /* 拉大图片和文字的间距 */
+            position: relative; 
+            transition: all 0.3s ease;
+        }
+
+        /* 头像全面放大 */
+        .portrait { 
+            width: 120px; height: 160px; 
+            flex-shrink: 0;
+            align-self: center;
+            border-radius: 12px; 
+            background: #0A0A0F; 
+            border: 1.5px solid rgba(0, 229, 255, 0.3); 
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        
+        .avatar { 
+            width: 100%; height: 100%; 
+            background-size: cover; 
+            background-position: top center; 
+            background-repeat: no-repeat; 
+        }
+
+        /* 像素级对齐矩阵：通过精准计算的缩放比例（background-size）强制抹平 AI 原片比例差异 */
+        .a-wang { background-image: url('slide_assets/final_avatar_wang.png'); background-size: cover; background-position: center top; }
+        .a-li { background-image: url('slide_assets/final_avatar_li.png'); background-size: 180%; background-position: center 10%; } /* 头偏小，强行放大并切掉多余身体 */
+        .a-cai { background-image: url('slide_assets/final_avatar_cai.png'); background-size: 125%; background-position: center 5%; } /* 微调 */
+        .a-jiang { background-image: url('slide_assets/final_avatar_jiang.png'); background-size: 140%; background-position: center 5%; } /* 微调 */
+        .a-bi { background-image: url('slide_assets/final_avatar_bi.png'); background-size: cover; background-position: center top; }
+        .a-jin { background-image: url('slide_assets/final_avatar_jin.png'); background-size: 180%; background-position: center 10%; } /* 头偏小，强行放大 */
+.card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; padding-top: 2px;
+        }
+
+        .name-row {
+            display: flex;
+            align-items: baseline;
+            border-bottom: 2px solid var(--ice-bright); 
+            padding-bottom: 4px; 
+            margin: 0 0 6px 0; 
+            flex-wrap: wrap;
+            row-gap: 4px;
+        }
+
+        /* 名字字号全面提升 */
+        .name { font-size: 22px; font-weight: 800; color: #FFF; margin: 0; white-space: nowrap; }
+
+        .role-tag {
+            margin-left: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--ice-bright);
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+        }
+        .role-tag::before {
+            content: '';
+            display: inline-block;
+            width: 1.5px;
+            height: 14px;
+            background: rgba(255, 255, 255, 0.2);
+            margin-right: 12px;
+        }
+
+        /* 列表字体全面提升，修复文字断行Bug */
+        .info-section { width: 100%; display: flex; flex-direction: column; gap: 4px; }
+        .info-label { font-size: 13px; font-weight: 900; color: var(--ice-bright); margin-top: 2px;}
+        .bullet-list { list-style: none; padding-left: 0; margin: 0; }
+        .bullet { font-size: 13.5px; color: var(--text-muted); line-height: 1.55; position: relative; padding-left: 14px; margin-bottom: 5px; display: block; }
+        .bullet::before { content: '•'; color: var(--ice-bright); font-weight: 900; position: absolute; left: 0; top: 0; }
+
+    </style>
+</head>
+<body>
+    <div class="slide-canvas">
+        
+        <!-- 绝对保护右上角的 Logo -->
+        <img src="slide_assets/lockup_white.svg" class="top-logo" alt="NeoPulse Logo">
+
+        <div class="header-area">
+            <div class="title-block">
+                <h1>核心运营团队</h1>
+                <p>产学研商全链路覆盖</p>
+            </div>
+        </div>
+        
+        <div class="team-grid">
+            
+            <!-- ROW 1 -->
+            <div class="member-card card-lg">
+                <div class="portrait"><div class="avatar a-wang"></div></div>
+                <div class="card-content">
+                    <div class="name-row"><h2 class="name">王小宇</h2><span class="role-tag">首席执行官</span></div>
+                    <div class="info-section">
+                        <ul class="bullet-list">
+                            <li class="bullet">大连理工生物医学工程博士 · 现西安大略大学 Adrian M. Owen <span style="color: var(--ice-bright);">院士（意识研究全球领军学者）</span>实验室博士后</li>
+                            <li class="bullet">聚焦异常意识状态（麻醉、昏迷、意识障碍等）的神经机制研究</li>
+                            <li class="bullet">掌握脑机接口多环节研发经验：实验设计 · 信号处理 · 算法建模 · 开源项目</li>
+                            <li class="bullet">一作/通讯论文 <span style="color: var(--ice-bright);">10 余篇</span> · 主持国家级课题 1 项<span style="color: var(--ice-bright);">（全国共 83 项）</span></li>
+                            <li class="bullet">2023 年入选加拿大高等研究院意识神经科学研讨会 · <span style="color: var(--ice-bright);">全球 30 人遴选</span></li>
+                            <li class="bullet">博士生国家奖学金 · 辽宁省优秀博士毕业生</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="member-card card-lg">
+                <div class="portrait"><div class="avatar a-li"></div></div>
+                <div class="card-content">
+                    <div class="name-row"><h2 class="name">李论</h2><span class="role-tag">首席市场官</span></div>
+                    <div class="info-section">
+                        <ul class="bullet-list">
+                            <li class="bullet">芬兰<span style="color: var(--ice-bright);">于韦斯屈莱大学</span>信息技术学院博士</li>
+                            <li class="bullet">博士研究方向：<span style="color: var(--ice-bright);">学习分析</span> · 聚焦<span style="color: var(--ice-bright);">神经管理</span></li>
+                            <li class="bullet">发表英文期刊 / 会议论文多篇</li>
+                            <li class="bullet">前<span style="color: var(--ice-bright);">大连创模科技有限公司</span>项目经理，负责产品研发到市场落地全流程</li>
+                            <li class="bullet">擅长产品市场推广与商务渠道全链路运营</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ROW 2 -->
+            <!-- ROW 3 -->
+            <div class="member-card card-sm">
+                <div class="portrait"><div class="avatar a-jiang"></div></div>
+                <div class="card-content">
+                    <div class="name-row"><h2 class="name">姜文华</h2><span class="role-tag">首席运营官</span></div>
+                    <div class="info-section">
+                        <ul class="bullet-list">
+                            <li class="bullet">上海交通大学机械电子硕士 · 外企管理 <span style="color: var(--ice-bright);">20 余年</span></li>
+                            <li class="bullet">前<span style="color: var(--ice-bright);">Technetics Group 亚太区战略与销售总监</span>，管理业务规模<span style="color: var(--ice-bright);">近亿美金</span> · 主导亚太区<span style="color: var(--ice-bright);">并购战略</span>，5 年带团队实现业务<span style="color: var(--ice-bright);">20 万美金 → 近 2 亿美金</span></li>
+                            <li class="bullet">连续创业者 · 创建<span style="color: var(--ice-bright);">上海因福罗机电科技有限公司</span>，从事重工业跨境贸易</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="member-card card-sm">
+                <div class="portrait"><div class="avatar a-bi"></div></div>
+                <div class="card-content">
+                    <div class="name-row"><h2 class="name">毕晓健</h2><span class="role-tag">首席财务官</span></div>
+                    <div class="info-section">
+                        <ul class="bullet-list">
+                            <li class="bullet">上海交通大学化工学院硕士 · 新材料领域耕耘 <span style="color: var(--ice-bright);">20 余年</span></li>
+                            <li class="bullet">2013 年共同创立<span style="color: var(--ice-bright);">嘉兴高正新材料科技股份有限公司</span>，联合创始人兼<span style="color: var(--ice-bright);">董事会秘书</span>，主导公司<span style="color: var(--ice-bright);">投融资业务</span>：资本运作 · 董事会治理 · 投资人关系</li>
+                            <li class="bullet">研究方向：高分子材料改性与表面处理 —— <span style="color: var(--ice-bright);">技术 × 资本 双栖背景</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="member-card card-sm">
+                <div class="portrait"><div class="avatar a-cai"></div></div>
+                <div class="card-content">
+                    <div class="name-row"><h2 class="name">蔡翘楚</h2><span class="role-tag">产品总监</span></div>
+                    <div class="info-section">
+                        <ul class="bullet-list">
+                            <li class="bullet">韩国仁荷大学机械硕士 · 银行 × 硬科技<span style="color: var(--ice-bright);">双栖背景</span></li>
+                            <li class="bullet">前<span style="color: var(--ice-bright);">科技创业公司产品负责人</span>，主导 2 款产品核心性能达行业领先 · 通过<span style="color: var(--ice-bright);">CE 认证</span>，<span style="color: var(--ice-bright);">3 年销售额破亿</span> · 覆盖硬件研发至商业化落地全链路</li>
+                            <li class="bullet">前<span style="color: var(--ice-bright);">中国农业银行苏州分行信贷部</span>，负责科技及小微企业信贷业务</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="member-card card-sm">
+                <div class="portrait"><div class="avatar a-jin"></div></div>
+                <div class="card-content">
+                    <div class="name-row"><h2 class="name">金玉文</h2><span class="role-tag">行政总监</span></div>
+                    <div class="info-section">
+                        <ul class="bullet-list">
+                            <li class="bullet">爱尔兰都柏林大学硕士</li>
+                            <li class="bullet"><span style="color: var(--ice-bright);">大连理工大学医学部</span>课题组管理经验，擅长项目整体规划与执行，独立负责绩效考核体系设计，体系构建力强</li>
+                            <li class="bullet">综合协调：跨部门沟通 · 多线程事务管理 · 国际化素养</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
+</template>
+<template id="slide-9" data-label="P12 Advisors"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <base href="./">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPulse - P11 科学家团队与顾问网络</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+        
+        :root {
+            --bg-base: #050508;
+            --ice-cyan: #4EA8DB;
+            --ice-bright: #00E5FF;
+            --text-main: #FFFFFF;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            display: flex; align-items: center; justify-content: center;
+            height: 100vh; overflow: hidden;
+            background-image: radial-gradient(circle at 10% 20%, rgba(0, 229, 255, 0.05) 0%, transparent 50%);
+        }
+
+        .slide-canvas {
+            position: relative;
+            width: 90vw; max-width: 1440px; aspect-ratio: 16 / 9;
+            background: var(--bg-base);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.9);
+            display: flex; flex-direction: column; padding: 40px 50px 20px 50px;
+        }
+
+        .top-logo { width: 240px; position: absolute; top: 8px; right: 8px; z-index: 100; }
+
+        .header-area {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            margin-bottom: 20px; position: relative; flex-shrink: 0;
+        }
+        .title-block { display: flex; align-items: baseline; gap: 20px; }
+        .title-block h1 { font-size: 38px; font-weight: 800; color: #FFF; }
+        .title-block p  { font-size: 18px; color: var(--ice-cyan); font-weight: 500; }
+        
+        .main-stage { flex: 1; display: flex; flex-direction: column; gap: 12px; min-height: 0; }
+
+        /* --- LAYER 1: GIANTS --- */
+        .giants-row { display: grid; grid-template-columns: 1fr 1fr; gap: 17px; min-height: 280px; flex-shrink: 0; }
+        .giant-card { 
+            background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); 
+            border-radius: 16px; padding: 14px 24px 24px 24px; display: block; 
+            border-top: 5px solid var(--ice-cyan); position: relative;
+        }
+        .portrait-lg { 
+            width: 140px; height: 166px; border-radius: 18px; background: #15151A; 
+            border: 3px solid rgba(0, 229, 255, 0.4); overflow: hidden; 
+            float: left; margin-right: 28px; margin-bottom: 10px;
+        }
+        .avatar { width: 100%; height: 100%; background-size: cover; background-position: center; }
+        
+        .g-sci { background-image: url('slide_assets/avatar_scientist.png'); }
+        .g-cong { background-image: url('slide_assets/final_avatar_cong.png'); }
+        .g-owen { background-image: url('slide_assets/final_avatar_owen.png'); }
+        .g-lifan { background-image: url('slide_assets/final_avatar_lifan.png'); }
+        .g-linjiaqi { background-image: url('slide_assets/final_avatar_linjiaqi.png'); }
+        .g-zhangchi { background-image: url('slide_assets/final_avatar_zhangchi.png'); }
+
+        .giant-info { display: block; }
+        .name-row { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; white-space: nowrap; }
+        .name-lg { font-size: 30px; font-weight: 900; color: #FFF; flex-shrink: 0; }
+        .title-lg { font-size: 15px; font-weight: 700; color: var(--ice-cyan); width: 100%; overflow: visible; }
+        
+        .bullets { list-style: none; margin: 0; padding: 0; }
+        .bullet { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; display: flex; align-items: flex-start; gap: 8px; line-height: 1.4; }
+        .bullet::before { content: '•'; color: var(--ice-bright); font-weight: 900; }
+        
+        /* Floating text wrap overrides for giant-card and lead-card */
+        .giant-info .bullets, .lead-card .bullets { display: block; margin: 0; padding-left: 18px; list-style-type: disc; }
+        .giant-info .bullet, .lead-card .bullet { 
+            display: list-item; position: static; padding-left: 0; 
+            margin-bottom: 4px; line-height: 1.4; 
+        }
+        .giant-info .bullet { font-size: 14px; }
+        .lead-card .bullet { font-size: 12.5px; }
+        
+        .giant-info .bullet::marker, .lead-card .bullet::marker { color: var(--ice-bright); font-weight: 900; }
+        .giant-info .bullet::marker { font-size: 18px; }
+        .lead-card .bullet::marker { font-size: 16px; }
+        
+        .giant-info .bullet::before, .lead-card .bullet::before { display: none; }
+        .leads-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; flex: 1; flex-shrink: 0; min-height: 0; }
+        .lead-card { 
+            background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border); 
+            border-radius: 12px; padding: 14px 22px 20px 22px; border-left: 4px solid var(--ice-cyan);
+            display: block; overflow: hidden;
+        }
+        .lead-head { display: block; margin-bottom: 12px; }
+        .port-sm { 
+            width: 105px; height: 140px; border-radius: 10px; overflow: hidden; 
+            border: 2px solid rgba(0, 229, 255, 0.3); box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            float: left; margin-right: 20px; margin-bottom: 6px; 
+        }
+        .lead-meta { display: flex; align-items: center; gap: 14px; padding-top: 2px; }
+        .l-name { font-size: 28px; font-weight: 800; color: #FFF; line-height: 1; white-space: nowrap; }
+        .l-title-stack { display: flex; flex-direction: column; justify-content: center; gap: 4px; border-left: 2px solid rgba(255,255,255,0.15); padding-left: 12px; }
+        .l-title { font-size: 13px; color: var(--ice-cyan); font-weight: 700; line-height: 1.1; margin-top: 0; }
+        .l-sub { font-size: 12px; color: var(--text-muted); opacity: 0.8; margin-top: 0; line-height: 1.1; }
+
+        /* --- LAYER 3: ECOSYSTEM --- */
+        .eco-section { margin-top: auto; display: flex; flex-direction: row; align-items: center; gap: 20px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 12px 20px; }
+        .eco-title-bar { 
+            border-left: 4px solid var(--ice-bright); padding-left: 12px;
+            font-size: 14px; font-weight: 900; color: var(--ice-bright); letter-spacing: 1px; flex-shrink: 0;
+        }
+        .eco-strip { 
+            display: flex; justify-content: space-around; flex: 1;
+        }
+        .eco-box { display: flex; align-items: baseline; gap: 8px; }
+        .eco-val { font-size: 18px; font-weight: 900; color: var(--ice-cyan); }
+        .eco-lab { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+
+    </style>
+</head>
+<body>
+    <div class="slide-canvas">
+        <img src="slide_assets/lockup_white.svg" class="top-logo" alt="NeoPulse Logo">
+        
+        <div class="header-area">
+            <div class="title-block">
+                <h1>科学家团队与顾问网络</h1>
+                <p>顶尖科研 × 产业落地 × 技术骨干</p>
+            </div>
+        </div>
+
+        <div class="main-stage">
+            <!-- TOP ROW: THE GIANTS -->
+            <div class="giants-row">
+                <div class="giant-card">
+                    <div class="portrait-lg"><div class="avatar g-cong"></div></div>
+                    <div class="giant-info">
+                        <div class="name-row"><span class="name-lg">丛丰裕</span> <span class="title-lg">首席科学顾问 · 大连理工大学教授</span></div>
+                        <ul class="bullets">
+                            <li class="bullet">
+                                <strong style="color:var(--ice-bright);">国家脑科学核心专家：</strong>国家科技创新2030"脑科学与类脑研究"管理专家组，中国工程院"前沿杰出青年学者"，教育部国防学部委员
+                            </li>
+                            <li class="bullet">
+                                <strong style="color:var(--ice-bright);">持续国际学术网络：</strong>芬兰于韦斯屈莱大学兼职教授，国家留学基金委《创新型人才国际合作培养项目》负责人，联合芬兰/德国/荷兰/爱尔兰/澳大利亚5国顶级大学，建成认知神经科学人才培养高地
+                            </li>
+                        </ul>
+
+                        <ul class="bullets" style="clear: left;">
+                            <li class="bullet">
+                                <strong style="color:var(--ice-bright);">脑机接口方向深耕·工业疲劳脑电方向领军学者：</strong>国际期刊与会议发表论文<strong style="color:#FFF;">300余篇</strong>，著英文专著《事件相关电位高级信号处理》，入选<strong style="color:#FFF;">全球前2%顶尖科学家榜单</strong>
+                            </li>
+                            <li class="bullet">
+                                <strong style="color:var(--ice-bright);">学术 × 国家战略双重验证：</strong>主持国家级重大项目合同额<strong style="color:#FFF;">3,600万+</strong>，科技部重点研发，国家基础科研重点项目×2，工信部AI医疗器械揭榜挂帅×2，获辽宁省自然科学学术成果奖一等奖
+                            </li>
+                            <li class="bullet" style="margin-bottom: 0;">
+                                <strong style="color:var(--ice-bright);">学术组织核心任职：</strong>中国神经科学学会意识障碍分会及心理学会认知神经科学分会副主任委员
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="giant-card">
+                    <div class="portrait-lg"><div class="avatar g-owen"></div></div>
+                    <div class="giant-info">
+                        <div class="name-row"><span class="name-lg">Adrian Owen</span> <span class="title-lg">意识研究顾问 · 西安大略大学教授</span></div>
+                        <ul class="bullets">
+                            <li class="bullet">
+                                <strong style="color:var(--ice-bright);">三院院士</strong>（英国皇家学会 · 加拿大皇家学会 · 加拿大卫生科学院）<br>
+                                2019 年获英国女王授予<strong style="color:#FFF;">大英帝国勋章 OBE</strong>
+                            </li>
+                            <li class="bullet">
+                                <strong style="color:var(--ice-bright);">加拿大卓越研究讲席教授</strong><br>
+                                <span style="opacity: 0.8;">联邦政府 1,000 万加币的最高规格讲席，全加仅约 25 位</span>
+                            </li>
+                            <li class="bullet">
+                                <strong style="color:var(--ice-bright);">CIFAR "大脑、心智与意识" 项目联合主任</strong><span style="opacity: 0.8;"> · 全球意识研究旗舰平台</span>
+                            </li>
+                        </ul>
+
+                        <ul class="bullets" style="clear: left;">
+                            <li class="bullet">
+                                <strong style="color:var(--ice-bright);">意识研究奠基者 · 无创脑机接口意识应用先驱：</strong>
+                                2006 年《科学》首创脑成像检测植物人意识，2024 年《新英格兰》证实 <strong style="color:#FFF;">25% 无反应患者存在隐匿意识</strong>，"认知运动分离综合征" 由其研究奠基命名；
+                            </li>
+                            <li class="bullet">
+                                <strong style="color:var(--ice-bright);">学术 × 商业双重验证</strong> · 任 Creyos Health 首席科学顾问，平台已在 <strong style="color:#FFF;">1,000+ 临床机构</strong> 使用
+                            </li>
+                            <li class="bullet" style="margin-bottom: 0;">
+                                <strong style="color:var(--ice-bright);">著畅销书《Into the Gray Zone》</strong>（2017），让意识研究走入公众视野，超十余种外文译本
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MIDDLE ROW: THE LEADS -->
+            <div class="leads-row">
+                <div class="lead-card">
+                    <div class="lead-head">
+                        <div class="port-sm"><div class="avatar g-linjiaqi"></div></div>
+                        <div class="lead-meta">
+                            <div class="l-name">林佳奇</div>
+                            <div class="l-title-stack">
+                                <div class="l-title">电极材料技术负责人</div>
+                                <div class="l-sub">大连理工大学 教授</div>
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="bullets">
+                        <li class="bullet">
+                            <strong style="color:var(--ice-bright);">跨学科学术根基：</strong>MIT化学工程&材料工程系双博士后（Langer/Alexander-Katz实验室）
+                        </li>
+                        <li class="bullet">
+                            <strong style="color:var(--ice-bright);">国家级青年人才·柔性电极量产带头人：</strong>中组部青年拔尖人才·科技部青年科学家·国家级青年人才，国家级柔性生物材料项目负责人
+                        </li>
+                        <li class="bullet" style="margin-bottom: 0;">
+                            <strong style="color:var(--ice-bright);">脑机接口产业化核心：</strong>前美国BrainCo Inc.研发总监，脑电产品获NASA·奥林匹克运动队采用，肌电产品入选《时代》2019年度百大发明
+                        </li>
+                    </ul>
+                </div>
+                <div class="lead-card">
+                    <div class="lead-head">
+                        <div class="port-sm"><div class="avatar g-zhangchi"></div></div>
+                        <div class="lead-meta">
+                            <div class="l-name">张驰</div>
+                            <div class="l-title-stack">
+                                <div class="l-title">工业疲劳产品技术负责人</div>
+                                <div class="l-sub">大连理工大学 副教授</div>
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="bullets">
+                        <li class="bullet">
+                            <strong style="color:var(--ice-bright);">精神疲劳监测核心专利+成果转化：</strong>软件著作权6项，相关技术已转化为意脉工业疲劳产品核心，《新闻直播间》《朝闻天下》专题报道
+                        </li>
+                        <li class="bullet">
+                            <strong style="color:var(--ice-bright);">学术认可+学会任职：</strong>省部级自然科学学术成果奖二/三等奖（第一完成人），辽宁省神经科学学会理事·SCI/EI论文20余篇
+                        </li>
+                        <li class="bullet" style="margin-bottom: 0;">
+                            <strong style="color:var(--ice-bright);">神经工程跨学科学者：</strong>生物电信号处理/脑机接口/人工智能三方向研究，芬兰于韦斯屈莱大学博士后访问
+                        </li>
+                    </ul>
+                </div>
+                <div class="lead-card">
+                    <div class="lead-head">
+                        <div class="port-sm"><div class="avatar g-lifan"></div></div>
+                        <div class="lead-meta">
+                            <div class="l-name">李凡</div>
+                            <div class="l-title-stack">
+                                <div class="l-title">睡眠产品技术负责人</div>
+                                <div class="l-sub">大连理工大学 助理研究员</div>
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="bullets">
+                        <li class="bullet">
+                            <strong style="color:var(--ice-bright);">睡眠监测核心专利+成果转化：</strong>第一发明人4项授权专利，阻塞性睡眠呼吸暂停初筛装置已转化为意脉产品
+                        </li>
+                        <li class="bullet">
+                            <strong style="color:var(--ice-bright);">国家/省/市三级科研项目骨干：</strong>科技部国家重点研发课题，主持省自然科学基金，入选大连市"优青"，市科技局项目3项
+                        </li>
+                        <li class="bullet" style="margin-bottom: 0;">
+                            <strong style="color:var(--ice-bright);">认知神经×临床医学国际深造：</strong>荷兰Donders脑认知研究所博士后，巴黎西岱INSERM访问学者
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- BOTTOM SECTION: ECOSYSTEM -->
+            <div class="eco-section">
+                <div class="eco-title-bar">人才生态</div>
+                <div class="eco-strip">
+                    <div class="eco-box"><div class="eco-val">20年</div><div class="eco-lab">脑机接口研究结晶</div></div>
+                    <div class="eco-box"><div class="eco-val">5位</div><div class="eco-lab">顶尖科研智囊</div></div>
+                    <div class="eco-box"><div class="eco-val">40名</div><div class="eco-lab">在读博士力量</div></div>
+                    <div class="eco-box"><div class="eco-val">8-10人</div><div class="eco-lab">年均人才输出</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>
+</template>
+<template id="slide-10" data-label="P13 Financing"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<base href="./">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P13 变体E · 右锚向左生长</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+:root {
+  --bg-base:#050508; --ice-cyan:#4EA8DB; --ice-bright:#00E5FF;
+  --text-main:#FFF; --text-muted:rgba(255,255,255,.6);
+  --glass-bg:rgba(255,255,255,.02); --glass-border:rgba(255,255,255,.08);
+  --neon-orange:#FF681A;
+  --c1:#00E5FF; --c2:#4EA8DB; --c3:#2E7FB0; --c4:#7DC4E8; --c5:#FF681A;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Inter','Noto Sans SC',sans-serif;
+  background:var(--bg-base); color:var(--text-main);
+  display:flex;align-items:center;justify-content:center;
+  height:100vh;overflow:hidden;
+  background-image:
+    radial-gradient(circle at 80% 20%,rgba(255,104,26,.04) 0%,transparent 50%),
+    radial-gradient(circle at 20% 80%,rgba(0,229,255,.04) 0%,transparent 50%);
+}
+.slide-canvas{
+  position:relative;width:90vw;max-width:1440px;aspect-ratio:16/9;
+  background:var(--bg-base);border:1px solid rgba(255,255,255,.05);
+  border-radius:20px;box-shadow:0 40px 100px -20px rgba(0,0,0,.8);
+  display:flex;flex-direction:column;padding:40px 50px 20px 50px;
+}
+.top-logo{width:240px;position:absolute;top:8px;right:8px;z-index:100}
+.header-area{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:30px;position:relative;flex-shrink:0}
+.title-block{display:flex;align-items:baseline;gap:20px}
+.title-block h1{font-size:42px;font-weight:800}
+.title-block p{font-size:20px;color:var(--ice-cyan);font-weight:500}
+
+.main-stage{flex:1;display:flex;gap:40px;min-height:0;align-items:stretch;margin-top:10px}
+
+/* LEFT */
+.funding-col{flex:1.1;display:flex;flex-direction:column;gap:18px;min-height:0}
+
+.funding-hero{
+  background:linear-gradient(135deg,rgba(0,229,255,.1) 0%,rgba(0,229,255,.02) 100%);
+  border:1px solid rgba(0,229,255,.2);border-radius:16px;padding:22px 30px;
+  display:flex;flex-direction:column;gap:6px;
+}
+.hero-label{font-size:13px;font-weight:900;color:var(--ice-bright);letter-spacing:2px;text-transform:uppercase}
+.hero-val{font-size:48px;font-weight:900;color:#FFF;line-height:1}
+.hero-val span{font-size:18px;color:var(--text-muted);margin-left:10px;font-family:'Noto Sans SC',sans-serif}
+
+/* Bar list — right-anchored growth */
+.bar-list{flex:1;display:flex;flex-direction:column;gap:10px;min-height:0}
+.bar-row{
+  position:relative;flex:1;
+  background:var(--glass-bg);border:1px solid var(--glass-border);
+  border-radius:12px;overflow:hidden;
+  display:flex;align-items:center;
+  padding:0 22px;
+  transition:transform .25s,border-color .25s;
+}
+.bar-row:hover{transform:translateX(2px);border-color:rgba(255,255,255,.18)}
+
+/* The fill — anchored to RIGHT, grows LEFTWARD */
+.bar-fill{
+  position:absolute;right:0;top:0;bottom:0;
+  border-radius:0;
+  z-index:0;
+}
+.bar-fill.f1{width:35%;background:linear-gradient(270deg,var(--c1) 0%,rgba(0,229,255,.15) 100%);box-shadow:inset 4px 0 12px rgba(0,229,255,.2)}
+.bar-fill.f2{width:30%;background:linear-gradient(270deg,var(--c2) 0%,rgba(78,168,219,.15) 100%)}
+.bar-fill.f3{width:20%;background:linear-gradient(270deg,var(--c3) 0%,rgba(46,127,176,.15) 100%)}
+.bar-fill.f4{width:10%;background:linear-gradient(270deg,var(--c4) 0%,rgba(125,196,232,.15) 100%)}
+.bar-fill.f5{width:5%;background:linear-gradient(270deg,var(--c5) 0%,rgba(255,104,26,.2) 100%);box-shadow:inset 4px 0 16px rgba(255,104,26,.3)}
+
+/* Right-edge accent line */
+.bar-row::after{
+  content:'';position:absolute;right:0;top:8px;bottom:8px;width:3px;
+  background:var(--c1);z-index:2;border-radius:2px;
+}
+.bar-row.r2::after{background:var(--c2)}
+.bar-row.r3::after{background:var(--c3)}
+.bar-row.r4::after{background:var(--c4)}
+.bar-row.r5::after{background:var(--c5);box-shadow:0 0 10px var(--c5)}
+
+/* Reserve row tint */
+.bar-row.r5{background:rgba(255,104,26,.04);border-color:rgba(255,104,26,.2)}
+
+/* Content (text) — left, always above fill */
+.bar-content{
+  position:relative;z-index:1;
+  display:flex;align-items:center;gap:18px;
+  width:65%;  /* safe zone since max bar = 35% */
+}
+.bar-pct{
+  font-size:38px;font-weight:900;color:#FFF;
+  min-width:84px;font-family:'Inter',sans-serif;
+  letter-spacing:-1px;
+}
+.bar-row.r5 .bar-pct{color:var(--neon-orange)}
+.bar-meta{display:flex;flex-direction:column;gap:4px;min-width:0}
+.bar-title{font-size:22px;font-weight:800;color:#FFF}
+.bar-desc{font-size:16px;color:var(--text-muted);line-height:1.4}
+.bar-row.r5 .bar-title{color:var(--neon-orange)}
+
+/* RIGHT — roadmap (unchanged) */
+.roadmap-col{flex:.9;display:flex;flex-direction:column}
+.stage-stack{flex:1;display:flex;flex-direction:column;gap:15px;position:relative}
+.stage-stack::before{content:'';position:absolute;left:30px;top:40px;bottom:40px;width:1px;background:linear-gradient(180deg,var(--ice-bright) 0%,var(--neon-orange) 100%);opacity:.2}
+.stage-box{flex:1;background:rgba(255,255,255,.02);border:1px solid var(--glass-border);border-radius:16px;padding:25px 30px 25px 75px;position:relative;display:flex;flex-direction:column;justify-content:center;transition:all .3s}
+.stage-box:hover{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.2)}
+.stage-num{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;background:var(--bg-base);border:2px solid var(--ice-bright);color:#FFF;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 15px rgba(0,229,255,.3);z-index:10}
+.stage-box:nth-child(2) .stage-num{border-color:var(--ice-cyan);box-shadow:0 0 15px rgba(78,168,219,.3)}
+.stage-box:nth-child(3) .stage-num{border-color:var(--neon-orange);box-shadow:0 0 15px rgba(255,104,26,.3)}
+.stage-title{font-size:23px;font-weight:800;color:#FFF;margin-bottom:8px}
+.stage-items{display:flex;flex-direction:column;gap:5px}
+.stage-item{font-size:17px;color:var(--text-muted);display:flex;align-items:center;gap:8px}
+.stage-item::before{content:'→';color:var(--ice-bright);font-weight:900}
+</style>
+</head>
+<body>
+<div class="slide-canvas">
+  <img src="slide_assets/lockup_white.svg" class="top-logo" alt="NeoPulse Logo">
+
+  <div class="header-area">
+    <div class="title-block">
+      <h1>融资方案</h1>
+      <p>Pre-A 轮规划与阶段目标</p>
+    </div>
+  </div>
+
+  <div class="main-stage">
+    <!-- LEFT -->
+    <div class="funding-col">
+      <div class="funding-hero">
+        <div class="hero-label">本轮融资需求 · PRE-A ROUND</div>
+        <div class="hero-val">2000 - 3000<span>万元</span></div>
+      </div>
+
+      <div class="bar-list">
+        <div class="bar-row r1">
+          <div class="bar-fill f1"></div>
+          <div class="bar-content">
+            <div class="bar-pct">35%</div>
+            <div class="bar-meta">
+              <div class="bar-title">产品研发</div>
+              <div class="bar-desc">设备量产 · NMPA 注册 · 临床采集</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bar-row r2">
+          <div class="bar-fill f2"></div>
+          <div class="bar-content">
+            <div class="bar-pct">30%</div>
+            <div class="bar-meta">
+              <div class="bar-title">团队扩充</div>
+              <div class="bar-desc">商务团队 + 技术工程师 + 运营支撑</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bar-row r3">
+          <div class="bar-fill f3"></div>
+          <div class="bar-content">
+            <div class="bar-pct">20%</div>
+            <div class="bar-meta">
+              <div class="bar-title">平台与算力</div>
+              <div class="bar-desc">AI 模型训练 · 数据平台 · 云基建</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bar-row r4">
+          <div class="bar-fill f4"></div>
+          <div class="bar-content">
+            <div class="bar-pct">10%</div>
+            <div class="bar-meta">
+              <div class="bar-title">市场拓展</div>
+              <div class="bar-desc">客户获取 · 行业展会 · 渠道建设</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bar-row r5">
+          <div class="bar-fill f5"></div>
+          <div class="bar-content">
+            <div class="bar-pct">5%</div>
+            <div class="bar-meta">
+              <div class="bar-title">运营储备</div>
+              <div class="bar-desc">应急缓冲与流动资金，确保抗风险能力</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="roadmap-col">
+      <div class="stage-stack">
+        <div class="stage-box">
+          <div class="stage-num">01</div>
+          <div class="stage-title">第一阶段：团队扩充 · 产品定版</div>
+          <div class="stage-items">
+            <div class="stage-item">商务与技术团队核心成员全部到位</div>
+            <div class="stage-item">产品完成最终工程定版与小批量生产</div>
+            <div class="stage-item">首批目标标杆客户需求确认与技术对位</div>
+          </div>
+        </div>
+        <div class="stage-box">
+          <div class="stage-num">02</div>
+          <div class="stage-title">第二阶段：客户签约 · 收入验证</div>
+          <div class="stage-items">
+            <div class="stage-item">首批付费客户正式签约与设备部署</div>
+            <div class="stage-item">提交 NMPA 二类注册核心材料</div>
+            <div class="stage-item">年化收入目标实现百万级突破</div>
+          </div>
+        </div>
+        <div class="stage-box">
+          <div class="stage-num">03</div>
+          <div class="stage-title">第三阶段：规模扩张 · A轮准备</div>
+          <div class="stage-items">
+            <div class="stage-item">付费客户扩展至 10+ 家，形成行业影响力</div>
+            <div class="stage-item">平台 SaaS 级独立收入占比显著提升</div>
+            <div class="stage-item">启动 A 轮 + 国内行业领先地位确立</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
+
+</template>
+<template id="slide-11" data-label="P14 Vision"><!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <base href="./">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeoPulse - P12 长期愿景：从读懂大脑到理解身体</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+        
+        :root {
+            --bg-base: #050508;
+            --ice-cyan: #4EA8DB;
+            --ice-bright: #00E5FF;
+            --text-main: #FFFFFF;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --glass-bg: rgba(0, 0, 0, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            display: flex; align-items: center; justify-content: center;
+            height: 100vh; overflow: hidden;
+        }
+
+        .slide-canvas {
+            position: relative;
+            width: 90vw; max-width: 1440px; aspect-ratio: 16 / 9;
+            background: var(--bg-base);
+            border-radius: 20px;
+            box-shadow: 0 50px 120px -30px rgba(0, 0, 0, 0.9);
+            display: flex; flex-direction: column; overflow: hidden;
+        }
+
+        /* DYNAMIC VISION BACKGROUND */
+        .vision-background {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('slide_assets/长期愿景.png');
+            background-size: cover; background-position: center;
+            z-index: 1;
+        }
+
+        /* CINEMATIC BOTTOM BAR */
+        .vision-bottom-bar {
+            position: absolute; bottom: 0; left: 0; right: 0; height: 100px;
+            background: linear-gradient(to top, rgba(5,5,8,1) 0%, rgba(5,5,8,0.7) 40%, rgba(5,5,8,0) 100%);
+            display: flex; justify-content: space-between; align-items: flex-end;
+            padding: 0 50px 30px 50px; z-index: 10;
+            animation: slideUp 1s ease-out;
+        }
+
+        .vbb-left { display: flex; flex-direction: column; gap: 4px; }
+        .vbb-subtitle { font-size: 14px; font-weight: 800; color: var(--ice-bright); letter-spacing: 4px; }
+        .vbb-title { font-size: 34px; font-weight: 900; color: #FFF; letter-spacing: 2px; }
+
+        .vbb-right { 
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(0, 229, 255, 0.3);
+            border-left: 4px solid var(--ice-bright); backdrop-filter: blur(8px);
+            padding: 10px 20px; border-radius: 4px;
+            font-size: 16px; font-weight: 700; color: #FFF; letter-spacing: 1px;
+        }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    </style>
+</head>
+<body>
+    <div class="slide-canvas">
+        <!-- Background Imagery -->
+        <div class="vision-background"></div>
+
+        <!-- Cinematic Bottom Bar Typography -->
+        <div class="vision-bottom-bar">
+            <div class="vbb-left">
+                <div class="vbb-subtitle">长期愿景 / VISION</div>
+                <div class="vbb-title">从读懂大脑，到理解身体</div>
+            </div>
+            <div class="vbb-right">
+                建立人和自身之间的翻译层 —— NeoPulse
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>
+</template>
+
+
+<script>
+  const TOTAL = 12;
+  const frame = document.getElementById('frame');
+  const dotsWrap = document.getElementById('dots');
+  const pageInd = document.getElementById('pageInd');
+  let cur = -1;
+
+  // Build dots
+  for (let i=0; i<TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot'; d.dataset.i = i;
+    d.onclick = () => go(i);
+    dotsWrap.appendChild(d);
+  }
+  const dots = [...dotsWrap.children];
+
+  function render(i) {
+    const tpl = document.getElementById('slide-' + i);
+    if (!tpl) return;
+    frame.srcdoc = tpl.innerHTML;
+    dots.forEach((d, k) => d.classList.toggle('active', k === i));
+    pageInd.textContent = String(i+1).padStart(2,'0') + ' / ' + String(TOTAL).padStart(2,'0');
+    cur = i;
+  }
+
+  function go(i) {
+    if (i < 0 || i >= TOTAL || i === cur) return;
+    frame.classList.add('fading');
+    setTimeout(() => { render(i); frame.classList.remove('fading'); }, 180);
+  }
+
+  // Keyboard / wheel
+  window.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); go(cur+1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(cur-1); }
+    else if (e.key === 'Home') go(0);
+    else if (e.key === 'End') go(TOTAL-1);
+  });
+
+  let wheelLock = 0;
+  window.addEventListener('wheel', e => {
+    if (Math.abs(e.deltaY) < 30) return;
+    const now = Date.now(); if (now - wheelLock < 600) return; wheelLock = now;
+    go(cur + (e.deltaY > 0 ? 1 : -1));
+  }, { passive:true });
+
+  // Receive nav events from inside iframe (if a slide posts them)
+  window.addEventListener('message', ev => {
+    const m = ev.data; if (!m || typeof m !== 'object') return;
+    if (m.type === 'nav_keydown') {
+      if (m.key === 'ArrowRight' || m.key === ' ') go(cur+1);
+      else if (m.key === 'ArrowLeft') go(cur-1);
+    } else if (m.type === 'nav_wheel') {
+      go(cur + (m.deltaY > 0 ? 1 : -1));
+    }
+  });
+
+  // Mobile / tap-zone navigation
+  document.getElementById('tapLeft').addEventListener('click', () => go(cur - 1));
+  document.getElementById('tapRight').addEventListener('click', () => go(cur + 1));
+
+  // Fit the fixed 1920x1080 iframe to actual window via transform:scale
+  function fitFrame() {
+    const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    frame.style.transform = 'scale(' + s + ')';
+  }
+  window.addEventListener('resize', fitFrame);
+  fitFrame();
+
+  // Initial load
+  render(0);
+</script>
+</body>
+</html>
